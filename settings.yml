@@ -88,7 +88,7 @@ grid_card_min_width:
   min: 160
   max: 600
 
-grid_thumbnail_ratio:
+thumbnail_ratio:
   type: enum
   default: "4:3"
   choices:

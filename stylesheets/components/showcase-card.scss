@@ -6,7 +6,7 @@
   min-width: 0;
   height: 100%;
   overflow: hidden;
-  border: 1px solid var(--primary-low);
+  border: var(--tc-TopicShowcase-card-size-border) solid var(--primary-low);
   border-radius: var(--tc-TopicShowcase-card-border-radius);
   background: var(--d-content-background);
   color: var(--primary);
@@ -23,6 +23,13 @@
 
   &.--list {
     flex-direction: row;
+
+    // The card is as tall as its thumbnail. (A percentage height would be
+    // measured with the borders on top of the content, in the topic list
+    // cells, and stretch the thumbnail past its ratio.)
+    @include viewport.from(sm) {
+      height: auto;
+    }
 
     // Narrow screens: thumbnail on top, content below.
     @include viewport.until(sm) {
@@ -41,29 +48,27 @@
     background: var(--primary-very-low);
   }
 
+  // Every thumbnail has the shape of thumbnail_ratio. In the list layout the
+  // width comes from the sizing settings (see variables.scss) and the height
+  // from the ratio; narrow screens stack the thumbnail on top at full width.
   &.--list &__media {
     align-self: stretch;
     width: var(--tc-TopicShowcase-card-size-list-thumbnail-width);
-    min-height: 5.5rem;
+    aspect-ratio: var(--tc-TopicShowcase-card-ratio-list-thumbnail);
 
     @include viewport.until(sm) {
       width: 100%;
-      min-height: 0;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: var(--tc-TopicShowcase-card-ratio-thumbnail);
     }
   }
 
   &.--grid &__media {
     width: 100%;
-    aspect-ratio: var(--tc-TopicShowcase-card-ratio-grid-thumbnail);
+    aspect-ratio: var(--tc-TopicShowcase-card-ratio-thumbnail);
   }
 
   // A set list card height (list_card_height) applies from sm up; narrow
-  // screens stack the thumbnail on top and keep the automatic height. The
-  // thumbnail already stretches over the full height. The body clips what does
-  // not fit: the title is clamped to two lines, and the excerpt takes the
-  // space that is left, cut at a whole line (its text span is as tall as a
-  // whole number of lines fit in it).
+  // screens keep the automatic height.
   &.--list.--fixed-height {
     @include viewport.from(sm) {
       box-sizing: border-box;
@@ -71,14 +76,24 @@
     }
   }
 
-  &.--list.--fixed-height &__body {
+  // From sm up the content sits beside the thumbnail and has to fit into its
+  // height (a list card is as tall as its thumbnail, or as the set height):
+  // - `contain: size` keeps the content from making the card taller;
+  // - the title is clamped to two lines;
+  // - the excerpt takes the space that is left, cut at a whole line (its text
+  //   span is as tall as a whole number of lines fit in it);
+  // - the footer stays at the bottom.
+  &.--list &__body {
     @include viewport.from(sm) {
+      gap: var(--space-1);
+      padding-block: var(--space-2);
       min-height: 0;
       overflow: hidden;
+      contain: size;
     }
   }
 
-  &.--list.--fixed-height &__title {
+  &.--list &__title {
     @include viewport.from(sm) {
       display: -webkit-box;
       overflow: hidden;
@@ -88,7 +103,7 @@
     }
   }
 
-  &.--list.--fixed-height &__excerpt {
+  &.--list &__excerpt {
     @include viewport.from(sm) {
       display: block;
       flex: 1 1 0;
@@ -328,6 +343,20 @@
 
   .showcase-card__meta {
     flex-wrap: nowrap;
+  }
+
+  // A compact list row is as tall as its thumbnail; content that is shorter
+  // is centred beside it.
+  &.--list {
+    @include viewport.from(sm) {
+      .showcase-card__body {
+        justify-content: center;
+      }
+
+      .showcase-card__footer {
+        margin-top: 0;
+      }
+    }
   }
 
   &.--grid {

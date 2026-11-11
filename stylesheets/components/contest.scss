@@ -12,12 +12,15 @@
   );
 }
 
-// Contest announcement: a compact strip under the topic title.
+// Contest announcement: a compact strip under the topic title. The whole strip
+// is one control: a button that opens the entries below it, or a link to the
+// entries after the first post.
 .contest-strip {
   @extend %post-column;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  width: 100%;
   gap: var(--space-2) var(--space-3);
   margin: 0 0 var(--space-4);
   padding: var(--space-2) var(--space-3);
@@ -25,6 +28,24 @@
   border-radius: var(--d-border-radius-large);
   background: var(--tertiary-very-low);
   color: var(--primary);
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+
+  // The hover colour is set explicitly: the parent theme's link hover would
+  // recolour the text when the strip is a link.
+  &:hover {
+    border-color: var(--tertiary-medium);
+    background: var(--tertiary-low);
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--tertiary);
+    outline-offset: 2px;
+  }
 
   &__icon {
     flex: none;
@@ -35,31 +56,11 @@
     font-weight: 600;
   }
 
+  // Decorative thumbnails of some entries; the strip itself is the control.
   &__thumbnails {
     display: flex;
     align-items: center;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  &__thumbnail-item {
-    margin: 0;
-    padding: 0;
-
-    & + & {
-      margin-inline-start: var(--space-1);
-    }
-  }
-
-  &__thumbnail-link {
-    display: block;
-    border-radius: var(--d-border-radius);
-
-    &:focus-visible {
-      outline: 2px solid var(--tertiary);
-      outline-offset: 2px;
-    }
+    gap: var(--space-1);
   }
 
   &__thumbnail {
@@ -73,34 +74,17 @@
     object-fit: cover;
   }
 
-  &__link {
+  &__action {
     display: inline-flex;
     align-items: center;
     gap: var(--space-1);
     margin-inline-start: auto;
+    color: var(--tertiary);
     font-weight: 600;
   }
 
-  // The disclosure button (entries opened from the strip) looks like the link
-  // that scrolls to the list after the first post.
-  button.contest-strip__link {
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: var(--tertiary);
-    font: inherit;
-    font-weight: 600;
-    cursor: pointer;
-
-    .discourse-no-touch &:hover {
-      color: var(--tertiary-hover);
-      text-decoration: underline;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--tertiary);
-      outline-offset: 2px;
-    }
+  &:hover &__action {
+    text-decoration: underline;
   }
 }
 

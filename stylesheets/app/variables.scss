@@ -25,14 +25,60 @@
   );
 }
 
-// 0 means automatic: the value the styles always had. (The setting arrives
-// as text, so it is compared as text.)
-@function px-or($value, $automatic) {
-  @if "#{$value}" == "0" {
-    @return $automatic;
+// "16:9" -> calc(16 / 9), the ratio as a number to calculate with.
+@function ratio-number($choice) {
+  $colon: string.index($choice, ":");
+
+  @return string.unquote(
+    "calc(" + string.slice($choice, 1, $colon - 1) + " / " +
+      string.slice($choice, $colon + 1) + ")"
+  );
+}
+
+// Whether a size setting is set (0 means automatic). The setting arrives as
+// text, so it is compared as text.
+@function is-set($value) {
+  @return "#{$value}" != "0";
+}
+
+// Height of a list card from sm up: the set height, else it follows the
+// thumbnail.
+@function list-height($height) {
+  @if is-set($height) {
+    @return #{$height}px;
   }
 
-  @return #{$value}px;
+  @return 100%;
+}
+
+// Shape of the thumbnail of a list card from sm up: the thumbnail ratio, unless
+// both width and height are set, which are then applied literally.
+@function list-thumbnail-ratio($width, $height) {
+  @if is-set($width) and is-set($height) {
+    @return auto;
+  }
+
+  @return var(--tc-TopicShowcase-card-ratio-thumbnail);
+}
+
+// Width of the thumbnail of a list card from sm up:
+// - width set: that width (with the height set too, both literally);
+// - only the height set: as wide as the thumbnail ratio makes it at that height
+//   (inside the card border);
+// - neither: about a third of the card.
+@function list-thumbnail-width($width, $height) {
+  @if is-set($width) {
+    @return #{$width}px;
+  }
+
+  @if is-set($height) {
+    @return calc(
+      (#{$height}px - 2 * var(--tc-TopicShowcase-card-size-border)) *
+        var(--tc-TopicShowcase-card-ratio-thumbnail-number)
+    );
+  }
+
+  @return clamp(5.5rem, 32%, 14rem);
 }
 
 :root {
@@ -41,13 +87,21 @@
       $card_border_radius
     )};
   --tc-TopicShowcase-card-space-gap: #{$card_gap}px;
-  --tc-TopicShowcase-card-size-list-height: #{px-or($list_card_height, 100%)};
-  --tc-TopicShowcase-card-size-list-thumbnail-width: #{px-or(
-      $list_thumbnail_width,
-      clamp(5.5rem, 32%, 14rem)
+  --tc-TopicShowcase-card-size-border: 1px;
+  --tc-TopicShowcase-card-ratio-thumbnail: #{aspect-ratio($thumbnail_ratio)};
+  --tc-TopicShowcase-card-ratio-thumbnail-number: #{ratio-number(
+      $thumbnail_ratio
     )};
-  --tc-TopicShowcase-card-ratio-grid-thumbnail: #{aspect-ratio(
-      $grid_thumbnail_ratio
+  --tc-TopicShowcase-card-size-list-height: #{list-height($list_card_height)};
+  --tc-TopicShowcase-card-size-list-thumbnail-width: #{list-thumbnail-width(
+      $list_thumbnail_width,
+      $list_card_height
+    )};
+
+  // With both sizes set the thumbnail is not held to the ratio.
+  --tc-TopicShowcase-card-ratio-list-thumbnail: #{list-thumbnail-ratio(
+      $list_thumbnail_width,
+      $list_card_height
     )};
   --tc-TopicShowcase-carousel-size-slides-per-view: #{$carousel_slides_per_view};
 }
