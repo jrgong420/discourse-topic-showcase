@@ -39,6 +39,12 @@ en:
       carousel_show_reply_count: "Show the reply count on carousel cards."
       carousel_show_likes: "Show the like count on carousel cards."
       carousel_show_activity: "Show the time of the last activity on carousel cards."
+      contest_enabled: "Show contests: on the announcement topic a strip under the title and a list of all entries after the first post, and on every entry a link back to the announcement. Needs contest_tag_group, and announcement tags (contest_announcement_tags or carousel_filter_tags)."
+      contest_tag_group: "Name of the tag group whose tags are contest tags. Entries and the announcement of a contest carry the same contest tag. Leave empty to turn contests off. The group must be visible to the visitors who should see contests."
+      contest_announcement_tags: "A topic is a contest announcement when it carries a contest tag and all of these tags; other topics with a contest tag are entries. When empty, carousel_filter_tags is used instead. With neither, contests are not shown."
+      contest_entries_order: "Order of the entries. latest = most recently active first, created = newest topic first."
+      contest_max_entries: "Maximum number of entry cards in the list after the first post. A link to all entries appears when there are more."
+      contest_strip_thumbnails: "Number of entry thumbnails in the strip under the title. 0 shows none. Entries without an image are skipped."
   showcase:
     sort:
       label: "Sort by"
@@ -60,3 +66,13 @@ en:
       new_count:
         one: "%{count} new"
         other: "%{count} new"
+  contest:
+    strip_label: "Contest entries"
+    entries:
+      one: "%{count} entry"
+      other: "%{count} entries"
+    entries_more: "%{count}+ entries"
+    show_entries: "Show entries"
+    heading: "Entries (%{number})"
+    view_all: "View all entries"
+    backlink: "Part of the contest:"

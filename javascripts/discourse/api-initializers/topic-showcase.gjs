@@ -1,6 +1,8 @@
 import { settings } from "virtual:theme";
 import HeaderTopicCell from "discourse/components/topic-list/header/topic-cell";
 import { apiInitializer } from "discourse/lib/api";
+import ContestEntriesOutlet from "../components/contest-entries-outlet.gjs";
+import ContestTopicOutlet from "../components/contest-topic-outlet.gjs";
 import ShowcaseCard from "../components/showcase-card.gjs";
 import ShowcaseCarouselOutlet from "../components/showcase-carousel-outlet.gjs";
 import ShowcaseSort from "../components/showcase-sort.gjs";
@@ -57,6 +59,17 @@ export default apiInitializer((api) => {
   // rendered on every discovery list; the component only shows on the homepage.
   if (settings.carousel_enabled && settings.carousel_filter_tags) {
     api.renderInOutlet("discovery-list-container-top", ShowcaseCarouselOutlet);
+  }
+
+  // Contests: a strip under the title of the announcement topic, the full list
+  // of entries after its first post and a link back to the announcement on
+  // every entry. Both outlets render on every topic; the components decide
+  // whether the topic is part of a contest. `topic-above-posts` sits under the
+  // topic title and, unlike `topic-above-post-stream`, is also rendered when
+  // the topic is opened deep in the stream (without its first post).
+  if (settings.contest_enabled && settings.contest_tag_group) {
+    api.renderInOutlet("topic-above-posts", ContestTopicOutlet);
+    api.renderAfterWrapperOutlet("post-article", ContestEntriesOutlet);
   }
 
   if (settings.show_sort_dropdown) {

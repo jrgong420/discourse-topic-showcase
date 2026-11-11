@@ -39,6 +39,12 @@ de:
       carousel_show_reply_count: "Anzahl der Antworten auf den Karussell-Karten anzeigen."
       carousel_show_likes: "Anzahl der Likes auf den Karussell-Karten anzeigen."
       carousel_show_activity: "Zeitpunkt der letzten Aktivität auf den Karussell-Karten anzeigen."
+      contest_enabled: "Wettbewerbe anzeigen: im Ankündigungsthema eine Leiste unter dem Titel und eine Liste aller Beiträge nach dem ersten Beitrag, in jedem Wettbewerbsbeitrag einen Link zurück zur Ankündigung. Benötigt contest_tag_group und Ankündigungs-Tags (contest_announcement_tags oder carousel_filter_tags)."
+      contest_tag_group: "Name der Tag-Gruppe, deren Tags Wettbewerbs-Tags sind. Die Beiträge und die Ankündigung eines Wettbewerbs tragen dasselbe Wettbewerbs-Tag. Leer lassen, um Wettbewerbe auszuschalten. Die Gruppe muss für die Besucher sichtbar sein, die Wettbewerbe sehen sollen."
+      contest_announcement_tags: "Ein Thema ist eine Wettbewerbsankündigung, wenn es ein Wettbewerbs-Tag und alle diese Tags trägt; andere Themen mit einem Wettbewerbs-Tag sind Beiträge. Wenn leer, wird stattdessen carousel_filter_tags verwendet. Ist beides leer, werden Wettbewerbe nicht angezeigt."
+      contest_entries_order: "Reihenfolge der Beiträge. latest = zuletzt aktive zuerst, created = neuestes Thema zuerst."
+      contest_max_entries: "Maximale Anzahl der Beitragskarten in der Liste nach dem ersten Beitrag. Gibt es mehr, erscheint ein Link zu allen Beiträgen."
+      contest_strip_thumbnails: "Anzahl der Beitrags-Vorschaubilder in der Leiste unter dem Titel. 0 zeigt keine. Beiträge ohne Bild werden übersprungen."
   showcase:
     sort:
       label: "Sortieren nach"
@@ -60,3 +66,13 @@ de:
       new_count:
         one: "%{count} neu"
         other: "%{count} neu"
+  contest:
+    strip_label: "Wettbewerbsbeiträge"
+    entries:
+      one: "%{count} Beitrag"
+      other: "%{count} Beiträge"
+    entries_more: "%{count}+ Beiträge"
+    show_entries: "Beiträge anzeigen"
+    heading: "Beiträge (%{number})"
+    view_all: "Alle Beiträge anzeigen"
+    backlink: "Teil des Wettbewerbs:"

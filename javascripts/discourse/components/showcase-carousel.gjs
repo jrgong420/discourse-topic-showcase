@@ -6,8 +6,6 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import { modifier } from "ember-modifier";
 import { settings, themePrefix } from "virtual:theme";
-import { ajax } from "discourse/lib/ajax";
-import TopicList from "discourse/models/topic-list";
 import { eq } from "discourse/truth-helpers";
 import DButton from "discourse/ui-kit/d-button";
 import dConcatClass from "discourse/ui-kit/helpers/d-concat-class";
@@ -19,33 +17,18 @@ import {
   writeCollapsed,
   writeSeenAt,
 } from "../lib/carousel-storage.js";
-import {
-  countNewSince,
-  filterAndOrderTopics,
-  hasAllTags,
-} from "../lib/carousel-topics.js";
+import { countNewSince, filterAndOrderTopics } from "../lib/carousel-topics.js";
 import { loadEmbla } from "../lib/embla.js";
+import { canFilterTags, parseTagList } from "../lib/tag-filter.js";
+import { fetchTopicsByTags } from "../lib/tag-topics.js";
+import { smallestThumbnailUrl } from "../lib/thumbnail.js";
 import ShowcaseCard from "./showcase-card.gjs";
-
-// Core's ordering keywords for the filter endpoint. "random" is applied on the
-// client, so it fetches by activity like "latest".
-const FILTER_ORDERS = { latest: "activity", created: "created" };
 
 // Thumbnails in the collapsed chip.
 const CHIP_THUMBNAILS = 3;
 
 // Ids for the ARIA references between header and body.
 let nextId = 0;
-
-// Tag names core's `tag:` topic filter can match (lib/topics_filter.rb).
-const FILTERABLE_TAG = /^[\p{N}\p{L}\-_.]+$/u;
-
-function filterTags() {
-  return String(settings.carousel_filter_tags ?? "")
-    .split("|")
-    .map((tag) => tag.trim())
-    .filter(Boolean);
-}
 
 /**
  * The featured topics carousel. Fetches the topics once when it is created,
@@ -218,10 +201,7 @@ export default class ShowcaseCarousel extends Component {
     const urls = [];
 
     for (const { topic } of this.slides) {
-      const thumbnails = [...(topic.thumbnails ?? [])].sort(
-        (a, b) => a.width - b.width
-      );
-      const url = thumbnails[0]?.url ?? topic.image_url;
+      const url = smallestThumbnailUrl(topic);
 
       if (url) {
         urls.push({ id: topic.id, url });
@@ -250,12 +230,12 @@ export default class ShowcaseCarousel extends Component {
   }
 
   async load() {
-    const tags = filterTags();
+    const tags = parseTagList(settings.carousel_filter_tags);
 
     // Core's topic filter ignores a tag clause it cannot parse and then
     // returns unfiltered topics. Such tag names are not supported here: show
     // nothing rather than unrelated topics.
-    if (!tags.every((tag) => FILTERABLE_TAG.test(tag))) {
+    if (!canFilterTags(tags)) {
       // eslint-disable-next-line no-console
       console.warn(
         "[topic-showcase] carousel_filter_tags contains a tag the topic filter cannot match; carousel not shown."
@@ -264,23 +244,17 @@ export default class ShowcaseCarousel extends Component {
     }
 
     try {
-      const order = FILTER_ORDERS[settings.carousel_order] ?? "activity";
-      // `tag:a+b` matches topics carrying all the tags.
-      const json = await ajax("/filter.json", {
-        data: { q: `tag:${tags.join("+")} order:${order}` },
-      });
+      // "random" is applied on the client, so it fetches by activity like
+      // "latest". Only topics that really carry every tag come back.
+      const { topics } = await fetchTopicsByTags(
+        this.store,
+        tags,
+        settings.carousel_order
+      );
 
       if (this.isDestroying) {
         return;
       }
-
-      // Same conversion core's topic lists use, so cards get real Topic
-      // models (category, creator, thumbnails, lastUnreadUrl).
-      // Keep only topics that really carry every tag, whatever the server
-      // made of the query.
-      const topics = (TopicList.topicsFrom(this.store, json) ?? []).filter(
-        (topic) => hasAllTags(topic, tags)
-      );
 
       const items = filterAndOrderTopics(topics, {
         order: settings.carousel_order,

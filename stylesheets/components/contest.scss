@@ -1,0 +1,147 @@
+@use "lib/viewport";
+
+// The three blocks sit in the post column, so they stop where the post body
+// does (the same width core gives other post-column content, such as the
+// pending posts notice). The timeline lives beside that column, so nothing
+// goes underneath it.
+%post-column {
+  box-sizing: border-box;
+  max-width: calc(
+    var(--topic-body-width) + (var(--topic-body-width-padding) * 2) +
+      var(--topic-avatar-width)
+  );
+}
+
+// Contest announcement: a compact strip under the topic title.
+.contest-strip {
+  @extend %post-column;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--tertiary-low);
+  border-radius: var(--d-border-radius-large);
+  background: var(--tertiary-very-low);
+  color: var(--primary);
+
+  &__icon {
+    flex: none;
+    color: var(--tertiary);
+  }
+
+  &__text {
+    font-weight: 600;
+  }
+
+  &__thumbnails {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__thumbnail-item {
+    margin: 0;
+    padding: 0;
+
+    & + & {
+      margin-inline-start: var(--space-1);
+    }
+  }
+
+  &__thumbnail-link {
+    display: block;
+    border-radius: var(--d-border-radius);
+
+    &:focus-visible {
+      outline: 2px solid var(--tertiary);
+      outline-offset: 2px;
+    }
+  }
+
+  &__thumbnail {
+    display: block;
+    box-sizing: border-box;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--primary-low);
+    border-radius: var(--d-border-radius);
+    background: var(--primary-low);
+    object-fit: cover;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-inline-start: auto;
+    font-weight: 600;
+  }
+}
+
+// Contest entry: a small line that leads back to the announcement.
+.contest-backlink {
+  @extend %post-column;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  color: var(--primary-high);
+  font-size: var(--font-down-1);
+
+  &__icon {
+    flex: none;
+    color: var(--tertiary);
+  }
+
+  &__link {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+}
+
+// Contest announcement: the full list of entries after the first post.
+.contest-entries {
+  @extend %post-column;
+  margin: var(--space-5) 0 var(--space-4);
+
+  // The sticky header would cover the heading after "Show entries".
+  scroll-margin-top: calc(var(--header-offset, 0px) + var(--space-4));
+
+  &__heading {
+    margin: 0 0 var(--space-3);
+    font-size: var(--font-up-2);
+
+    &:focus-visible {
+      outline: 2px solid var(--tertiary);
+      outline-offset: 2px;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, var(--tc-TopicShowcase-card-size-min-width)), 1fr)
+    );
+    gap: var(--tc-TopicShowcase-card-space-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__more {
+    display: inline-block;
+    margin-block-start: var(--space-4);
+    font-weight: 600;
+  }
+}
