@@ -142,6 +142,13 @@ carousel_slides_per_view:
   min: 1
   max: 6
 
+carousel_scroll_by:
+  type: enum
+  default: card
+  choices:
+    - card
+    - page
+
 carousel_loop:
   type: bool
   default: true

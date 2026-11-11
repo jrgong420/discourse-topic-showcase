@@ -31,6 +31,7 @@ en:
       carousel_display_expired_events: "Show topics whose calendar event is over (needs the Discourse Calendar plugin). Topics without event dates are never hidden."
       carousel_display_upcoming_events: "Show topics whose calendar event has not started yet (needs the Discourse Calendar plugin). Topics without event dates are never hidden."
       carousel_slides_per_view: "Number of cards visible at once on large screens. Narrow screens always show one card, with part of the next one visible."
+      carousel_scroll_by: "How far the arrows move the carousel: by one card, or by a full page of visible cards."
       carousel_loop: "Continue from the last card back to the first, and the other way round."
       carousel_collapsible: "Let visitors collapse the carousel. The choice is remembered per browser, and a collapsed carousel shows how many topics are new since it was last open."
       carousel_show_excerpt: "Show the topic excerpt on carousel cards (clamped to two lines)."

@@ -171,6 +171,20 @@
     display: none;
   }
 
+  // Subtle entrance when expanding (the slides are rendered fresh) and when
+  // collapsing (the header turns into the chip). Skipped for users who ask
+  // for less motion.
+  @media (prefers-reduced-motion: no-preference) {
+    &.is-expanded &__stage,
+    &.is-expanded &__pills {
+      animation: showcase-carousel-reveal 0.22s ease-out both;
+    }
+
+    &.is-collapsed &__toggle {
+      animation: showcase-carousel-settle 0.18s ease-out both;
+    }
+  }
+
   // Arrows sit over the card edges; with room (wide screens) the stage keeps
   // gutters for them and they sit outside the cards.
   &__stage {
@@ -304,5 +318,29 @@
       outline: 2px solid var(--tertiary);
       outline-offset: -2px;
     }
+  }
+}
+
+@keyframes showcase-carousel-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-2) * -1));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes showcase-carousel-settle {
+  from {
+    opacity: 0.4;
+    transform: scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }

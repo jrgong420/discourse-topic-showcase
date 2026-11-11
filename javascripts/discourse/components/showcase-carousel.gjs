@@ -100,9 +100,9 @@ export default class ShowcaseCarousel extends Component {
           align: "start",
           direction: this.isRtl ? "rtl" : "ltr",
           loop: !!settings.carousel_loop,
-          // One page of slides per step, so on narrow screens (one slide per
-          // view) it is one slide.
-          slidesToScroll: "auto",
+          // Step size of the arrows and pills: one card, or a full page of
+          // visible cards (which is one card on narrow screens anyway).
+          slidesToScroll: settings.carousel_scroll_by === "page" ? "auto" : 1,
           breakpoints: {
             // Jump instead of animating when the user asks for less motion.
             "(prefers-reduced-motion: reduce)": { duration: 0 },
