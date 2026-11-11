@@ -2,8 +2,11 @@ import { settings } from "virtual:theme";
 import HeaderTopicCell from "discourse/components/topic-list/header/topic-cell";
 import { apiInitializer } from "discourse/lib/api";
 import ShowcaseCard from "../components/showcase-card.gjs";
-import ShowcaseSortHeader from "../components/showcase-sort-header.gjs";
-import { buildLayoutConfig, resolveLayout } from "../lib/card-layout.js";
+import ShowcaseSort from "../components/showcase-sort.gjs";
+import {
+  layoutForCategory,
+  layoutForCurrentRoute,
+} from "../lib/route-layout.js";
 
 const BULK_SELECT_COLUMN = "bulk-select";
 const CARD_COLUMN = "showcase-card";
@@ -24,24 +27,9 @@ const GridCell = <template>
 
 const CELLS = { list: ListCell, grid: GridCell };
 
-// The sort column exists only in the header (the dropdown above the cards);
-// it renders nothing in the rows.
-const NoCell = <template></template>;
-const SORT_COLUMN = "showcase-sort";
-
-function ancestorIdsOf(category) {
-  const ids = [];
-  let parent = category?.parentCategory;
-  while (parent) {
-    ids.push(parent.id);
-    parent = parent.parentCategory;
-  }
-  return ids;
-}
-
 export default apiInitializer((api) => {
   const site = api.container.lookup("service:site");
-  const config = buildLayoutConfig(settings);
+  const router = api.container.lookup("service:router");
 
   // Only plain discovery lists get cards. Everything else stays untouched.
   function layoutFor(context) {
@@ -49,13 +37,17 @@ export default apiInitializer((api) => {
       return null;
     }
 
-    const { category } = context;
-    return resolveLayout({
-      categoryId: category?.id,
-      ancestorIds: ancestorIdsOf(category),
-      isMobile: site.mobileView,
-      config,
-    });
+    return layoutForCategory(context.category, site);
+  }
+
+  // Card lists have no header row, so the bulk select toggle and the sort
+  // dropdown live in the navigation controls.
+  api.registerValueTransformer("bulk-select-in-nav-controls", ({ value }) =>
+    layoutForCurrentRoute(router, site) ? true : value
+  );
+
+  if (settings.show_sort_dropdown) {
+    api.renderInOutlet("bread-crumbs-right", ShowcaseSort);
   }
 
   api.registerValueTransformer("topic-list-class", ({ value, context }) => {
@@ -78,17 +70,9 @@ export default apiInitializer((api) => {
       }
     }
 
-    // The topic header cell carries the bulk select toggle and actions and
-    // the topic list tabs; the card column reuses it so those keep working.
+    // The topic header cell carries the bulk select actions; the card column
+    // reuses it so bulk select keeps working.
     value.add(CARD_COLUMN, { header: HeaderTopicCell, item: CELLS[layout] });
-
-    if (settings.show_sort_bar) {
-      value.add(
-        SORT_COLUMN,
-        { header: ShowcaseSortHeader, item: NoCell },
-        { after: CARD_COLUMN }
-      );
-    }
 
     return value;
   });

@@ -1,0 +1,10 @@
+// Sort dropdown next to the category and tag dropdowns.
+.showcase-sort {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+
+  &__reverse {
+    padding-inline: var(--space-2);
+  }
+}

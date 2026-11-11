@@ -13,62 +13,17 @@
   border: 0;
   background: transparent;
 
-  // The header row becomes a toolbar above the cards: the bulk select toggle
-  // and actions for staff, and the sort buttons (guard: parent themes may hide
-  // or restyle the header).
+  // Card lists have no header row: sorting and the bulk select toggle live in
+  // the navigation controls. The header only appears in bulk select mode.
   > .topic-list-header {
-    display: block !important;
-    height: auto !important;
-    margin-bottom: var(--space-3);
-
-    tr {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: var(--space-2);
-      border: 0;
-    }
-
-    th {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      width: auto;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: var(--primary-medium);
-      font-size: var(--font-down-1);
-      font-weight: normal;
-      text-align: start;
-    }
-
-    // The topic cell keeps the bulk select controls; its own "default order"
-    // label is dropped and it pushes the sort buttons to the end.
-    th.default {
-      flex: 1;
-
-      > button[aria-pressed],
-      > span:not(.bulk-select-topics) {
-        display: none;
-      }
-    }
-
-    // The sort dropdown (guard: Horizon hides every header cell but the
-    // topic one).
-    th.topic-showcase__sort {
-      display: flex !important;
-    }
-
-    .topic-showcase__sort-reverse {
-      padding: var(--space-1) var(--space-2);
-    }
+    display: none;
   }
 
   // Bulk select mode: the toolbar floats at the bottom of the viewport, so the
   // bulk actions stay reachable while scrolling whatever sticky headers the
   // parent theme uses (guard: core and Horizon set their own sticky offsets).
   &.bulk-select-enabled > .topic-list-header {
+    display: block !important;
     position: fixed !important;
     inset-block: auto
       calc(
@@ -79,6 +34,7 @@
     z-index: z("header");
     width: fit-content;
     max-width: calc(100vw - var(--space-4) * 2);
+    height: auto !important;
     margin: 0 auto;
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--primary-low);
@@ -86,14 +42,28 @@
     background: var(--d-content-background);
     box-shadow: var(--shadow-dropdown);
 
+    tr {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2);
+      border: 0;
+    }
+
+    th {
+      display: block;
+      width: auto;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
     th.default {
       flex: none;
     }
 
-    // Only the bulk controls are shown: the checkbox column has no header
-    // content in card lists and sorting is paused while selecting.
-    th.bulk-select,
-    th.topic-showcase__sort {
+    // The checkbox column has no header content in card lists.
+    th.bulk-select {
       display: none !important;
     }
 
