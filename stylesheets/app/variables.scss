@@ -1,0 +1,24 @@
+// Theme settings are exposed to SCSS as variables ($grid_card_min_width, ...).
+// They are turned into tokens here so the rest of the styles only use tokens
+// and core variables.
+@use "sass:string";
+
+@function card-border-radius($choice) {
+  @if $choice == "none" {
+    @return 0;
+  } @else if $choice == "small" {
+    @return calc(var(--d-border-radius) * 0.5);
+  } @else if $choice == "large" {
+    @return var(--d-border-radius-large);
+  }
+
+  @return var(--d-border-radius);
+}
+
+:root {
+  --tc-TopicShowcase-card-size-min-width: #{$grid_card_min_width}px;
+  --tc-TopicShowcase-card-border-radius: #{card-border-radius(
+      $card_border_radius
+    )};
+  --tc-TopicShowcase-card-space-gap: var(--space-4);
+}

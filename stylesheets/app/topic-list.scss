@@ -1,0 +1,116 @@
+// The topic list <table> when it renders showcase cards.
+// Layout lives on the list; the card itself is styled in components/showcase-card.
+//
+// Parent themes (Horizon) register their own topic-list transformers and style
+// rows and cells with high-specificity selectors. Transformer order is not
+// under our control, so the declarations marked "guard" use !important: they
+// must win regardless of which theme registered what.
+.topic-list.topic-showcase {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+
+  // The card replaces the header row. While bulk select is active the header
+  // carries the bulk actions, so it stays available then.
+  > .topic-list-header {
+    display: none;
+  }
+
+  &.bulk-select-enabled > .topic-list-header {
+    display: block;
+    margin-bottom: var(--space-3);
+
+    tr {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    th {
+      display: block;
+      padding: 0;
+    }
+  }
+
+  > tbody.topic-list-body {
+    display: grid;
+    gap: var(--tc-TopicShowcase-card-space-gap);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  &.topic-showcase--list > tbody.topic-list-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  &.topic-showcase--grid > tbody.topic-list-body {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, var(--tc-TopicShowcase-card-size-min-width)), 1fr)
+    );
+  }
+
+  // The "new messages" marker row is a table row and has no place in a card list.
+  .topic-list-item-separator {
+    display: none;
+  }
+
+  > tbody.topic-list-body > tr.topic-list-item.topic-showcase__row {
+    // guard: neutralise row/card styling of the parent theme
+    display: block !important;
+    position: relative;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    cursor: auto;
+
+    &.selected td:first-of-type {
+      box-shadow: none;
+    }
+
+    // guard: only the card cell and the bulk select cell are rendered
+    > :not(.topic-showcase__cell, .bulk-select) {
+      display: none !important;
+    }
+
+    > .topic-showcase__cell {
+      display: block !important;
+      width: 100%;
+      min-width: 0;
+      max-width: none;
+      height: 100%;
+      margin: 0;
+      padding: 0 !important;
+      border: 0;
+      background: transparent;
+    }
+
+    > td.bulk-select {
+      display: block !important;
+      position: absolute;
+      inset-block-start: var(--space-2);
+      inset-inline-start: var(--space-2);
+      z-index: 2;
+      width: auto;
+      margin: 0;
+      padding: var(--space-1) !important;
+      border-radius: var(--d-border-radius);
+      background: var(--d-content-background) !important;
+
+      label {
+        margin: 0;
+      }
+    }
+
+    &.bulk-selected .showcase-card {
+      border-color: var(--tertiary);
+    }
+  }
+}

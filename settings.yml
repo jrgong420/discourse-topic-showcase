@@ -1,2 +1,98 @@
-example_setting:
+cards_enabled:
+  type: bool
   default: true
+
+default_layout_desktop:
+  type: enum
+  default: none
+  choices:
+    - none
+    - list
+    - grid
+
+default_layout_mobile:
+  type: enum
+  default: none
+  choices:
+    - none
+    - list
+    - grid
+
+list_view_categories:
+  type: list
+  list_type: category
+  default: ""
+
+grid_view_categories:
+  type: list
+  list_type: category
+  default: ""
+
+mobile_list_view_categories:
+  type: list
+  list_type: category
+  default: ""
+
+mobile_grid_view_categories:
+  type: list
+  list_type: category
+  default: ""
+
+inherit_layout_to_subcategories:
+  type: bool
+  default: false
+
+show_excerpt:
+  type: bool
+  default: true
+
+show_category:
+  type: bool
+  default: true
+
+show_tags:
+  type: bool
+  default: true
+
+show_author:
+  type: bool
+  default: true
+
+show_reply_count:
+  type: bool
+  default: true
+
+show_likes:
+  type: bool
+  default: true
+
+show_views:
+  type: bool
+  default: false
+
+show_activity:
+  type: bool
+  default: false
+
+show_publish_date:
+  type: bool
+  default: true
+
+grid_card_min_width:
+  type: integer
+  default: 260
+  min: 160
+  max: 600
+
+thumbnail_placeholder_icon:
+  type: string
+  default: "image"
+
+card_border_radius:
+  type: enum
+  default: medium
+  choices:
+    - none
+    - small
+    - medium
+    - large
