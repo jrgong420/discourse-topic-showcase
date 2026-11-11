@@ -35,14 +35,16 @@ de:
       carousel_display_expired_events: "Themen anzeigen, deren Kalendertermin vorbei ist (benötigt das Discourse-Calendar-Plugin). Themen ohne Termin werden nie ausgeblendet. Benötigt die Discourse-Calendar-Einstellung, die Event-Daten am Thementitel anzeigt; ohne sie enthalten Themenlisten keine Event-Daten und es wird nichts gefiltert."
       carousel_display_upcoming_events: "Themen anzeigen, deren Kalendertermin noch nicht begonnen hat (benötigt das Discourse-Calendar-Plugin). Themen ohne Termin werden nie ausgeblendet. Benötigt die Discourse-Calendar-Einstellung, die Event-Daten am Thementitel anzeigt; ohne sie enthalten Themenlisten keine Event-Daten und es wird nichts gefiltert."
       carousel_slides_per_view: "Anzahl der gleichzeitig sichtbaren Karten auf großen Bildschirmen. Schmale Bildschirme zeigen immer eine Karte, von der nächsten ist ein Teil sichtbar."
-      carousel_scroll_by: "Wie weit die Pfeile das Karussell bewegen: um eine Karte (card) oder um eine ganze Seite sichtbarer Karten (page)."
-      carousel_loop: "Von der letzten Karte wieder zur ersten springen und umgekehrt."
+      carousel_scroll_by: "Wie weit die Pfeile das Karussell bewegen: um eine Karte (card) oder um eine ganze Seite sichtbarer Karten (page). Gilt für beide Karussells (empfohlene Themen und Unterkategorien)."
+      carousel_loop: "Von der letzten Karte wieder zur ersten springen und umgekehrt. Gilt für beide Karussells (empfohlene Themen und Unterkategorien)."
       carousel_collapsible: "Besucher können das Karussell einklappen. Die Wahl wird pro Browser gespeichert, und ein eingeklapptes Karussell zeigt an, wie viele Themen seit dem letzten Öffnen neu sind."
       carousel_show_excerpt: "Auszug des Themas auf den Karussell-Karten anzeigen (auf zwei Zeilen begrenzt)."
       carousel_show_tags: "Tags auf den Karussell-Karten anzeigen (eine Zeile)."
       carousel_show_reply_count: "Anzahl der Antworten auf den Karussell-Karten anzeigen."
       carousel_show_likes: "Anzahl der Likes auf den Karussell-Karten anzeigen."
       carousel_show_activity: "Zeitpunkt der letzten Aktivität auf den Karussell-Karten anzeigen."
+      subcategory_carousel_categories: "Kategorien, deren Unterkategorien über der Themenliste als Karussell angezeigt werden. Es ersetzt auf den Seiten der Kategorie deren eigene Liste der Unterkategorien. Unterkategorien aufgeführter Kategorien bekommen kein eigenes Karussell, außer sie sind ebenfalls aufgeführt."
+      subcategory_carousel_min_children: "Mindestanzahl an Unterkategorien, die der Besucher sehen kann, damit das Karussell erscheint. Bei weniger wird die normale Liste der Unterkategorien der Kategorie (falls vorhanden) angezeigt."
       contest_enabled: "Wettbewerbe anzeigen: im Ankündigungsthema eine Leiste unter dem Titel und eine Liste aller Beiträge, in jedem Wettbewerbsbeitrag einen Link zurück zur Ankündigung. Benötigt contest_tag_group und Ankündigungs-Tags (contest_announcement_tags oder carousel_filter_tags)."
       contest_tag_group: "Name der Tag-Gruppe, deren Tags Wettbewerbs-Tags sind. Die Beiträge und die Ankündigung eines Wettbewerbs tragen dasselbe Wettbewerbs-Tag. Leer lassen, um Wettbewerbe auszuschalten. Die Gruppe muss für die Besucher sichtbar sein, die Wettbewerbe sehen sollen."
       contest_announcement_tags: "Ein Thema ist eine Wettbewerbsankündigung, wenn es ein Wettbewerbs-Tag und alle diese Tags trägt; andere Themen mit einem Wettbewerbs-Tag sind Beiträge. Wenn leer, wird stattdessen carousel_filter_tags verwendet. Ist beides leer, werden Wettbewerbe nicht angezeigt."
@@ -72,6 +74,11 @@ de:
       new_count:
         one: "%{count} neu"
         other: "%{count} neu"
+    subcategories:
+      label: "Unterkategorien von %{category}"
+      topic_count:
+        one: "%{number} Thema"
+        other: "%{number} Themen"
   contest:
     strip_label: "Wettbewerbsbeiträge"
     entries:

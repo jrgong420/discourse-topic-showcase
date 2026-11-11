@@ -1,37 +1,18 @@
 @use "lib/viewport";
 
 // Featured topics carousel: a compact header chip above a row of showcase
-// cards that Embla scrolls, arrows beside the cards and pagination pills
-// below them.
+// cards. The carousel itself (Embla, arrows, pills) is the frame, styled in
+// showcase-carousel-frame.
 .showcase-carousel {
   // Cards per view, and how much of the next card peeks in at the edge (a
-  // fraction of a card). The peek only applies when there are more slides
-  // than fit (`--peek`); otherwise the cards fill the row. The per-view
-  // counts match `slidesPerView` in the component.
+  // fraction of a card), read by the frame. The peek only applies when there
+  // are more slides than fit. The per-view counts match `slidesPerView` in
+  // the component.
   --tc-TopicShowcase-carousel-size-per-view: var(
     --tc-TopicShowcase-carousel-size-slides-per-view
   );
   --tc-TopicShowcase-carousel-size-peek: 0.13;
-  --tc-TopicShowcase-carousel-size-arrow: 2.25rem;
-  --tc-TopicShowcase-carousel-size-slide: calc(
-    100% / var(--tc-TopicShowcase-carousel-size-per-view)
-  );
   margin-block: 0 var(--space-4);
-
-  // Embla's track is pulled back by one gap, so the percentage is of the
-  // visible width plus one gap: n full cards, n - 1 gaps and the peek.
-  &.--peek {
-    --tc-TopicShowcase-carousel-size-slide: calc(
-      (
-          100% - var(--tc-TopicShowcase-card-space-gap) *
-            (1 - var(--tc-TopicShowcase-carousel-size-peek))
-        ) /
-        (
-          var(--tc-TopicShowcase-carousel-size-per-view) +
-            var(--tc-TopicShowcase-carousel-size-peek)
-        )
-    );
-  }
 
   @include viewport.until(sm) {
     --tc-TopicShowcase-carousel-size-per-view: 1;
@@ -175,148 +156,12 @@
   // collapsing (the header turns into the chip). Skipped for users who ask
   // for less motion.
   @media (prefers-reduced-motion: no-preference) {
-    &.is-expanded &__stage,
-    &.is-expanded &__pills {
+    &.is-expanded .showcase-carousel-frame {
       animation: showcase-carousel-reveal 0.22s ease-out both;
     }
 
     &.is-collapsed &__toggle {
       animation: showcase-carousel-settle 0.18s ease-out both;
-    }
-  }
-
-  // Arrows sit over the card edges; with room (wide screens) the stage keeps
-  // gutters for them and they sit outside the cards.
-  &__stage {
-    position: relative;
-
-    @include viewport.from(xl) {
-      padding-inline: calc(
-        var(--tc-TopicShowcase-carousel-size-arrow) + var(--space-2)
-      );
-    }
-  }
-
-  &__arrow.btn {
-    position: absolute;
-    inset-block-start: 50%;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--tc-TopicShowcase-carousel-size-arrow);
-    height: var(--tc-TopicShowcase-carousel-size-arrow);
-    padding: 0;
-    border: 1px solid var(--primary-low);
-    border-radius: 50%;
-    background: var(--secondary);
-    box-shadow: var(--shadow-card);
-    color: var(--primary);
-    transform: translateY(-50%);
-
-    .d-icon {
-      color: inherit;
-    }
-
-    .discourse-no-touch &:hover,
-    &:focus-visible {
-      border-color: var(--tertiary);
-      background: var(--secondary);
-      color: var(--tertiary);
-    }
-
-    &.--prev {
-      inset-inline-start: var(--space-1);
-
-      @include viewport.from(xl) {
-        inset-inline-start: 0;
-      }
-    }
-
-    &.--next {
-      inset-inline-end: var(--space-1);
-
-      @include viewport.from(xl) {
-        inset-inline-end: 0;
-      }
-    }
-  }
-
-  // The scroll direction flips with the reading direction.
-  .rtl &__arrow .d-icon {
-    transform: scaleX(-1);
-  }
-
-  // The padding leaves room for the card shadow and focus outline, which the
-  // clipping viewport would cut off; the negative margin keeps the cards
-  // aligned with the page.
-  &__viewport {
-    margin: calc(var(--space-1) * -1);
-    padding: var(--space-1);
-    overflow: hidden;
-  }
-
-  // Embla's recommended layout: the track is pulled back by one gap, every
-  // slide brings its own gap on the leading side.
-  &__track {
-    display: flex;
-    margin-inline-start: calc(var(--tc-TopicShowcase-card-space-gap) * -1);
-
-    // Vertical scrolling stays with the page while swiping horizontally.
-    touch-action: pan-y pinch-zoom;
-  }
-
-  &__slide {
-    // The slide size includes the gap padding.
-    box-sizing: border-box;
-    flex: 0 0 var(--tc-TopicShowcase-carousel-size-slide);
-    min-width: 0;
-    padding-inline-start: var(--tc-TopicShowcase-card-space-gap);
-  }
-
-  &__slide > .showcase-card {
-    height: 100%;
-  }
-
-  // One pill per scroll snap: the active one is wider and highlighted. The
-  // button is larger than the pill, so it is easy to hit.
-  &__pills {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-block-start: var(--space-2);
-  }
-
-  &__pill {
-    display: flex;
-    align-items: center;
-    height: var(--space-6);
-    padding: 0 var(--space-2);
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-
-    &::after {
-      content: "";
-      display: block;
-      width: var(--space-2);
-      height: var(--space-2);
-      border-radius: 100vmax;
-      background: var(--primary-low-mid);
-    }
-
-    .discourse-no-touch &:hover::after {
-      background: var(--primary-medium);
-    }
-
-    &.is-active::after {
-      width: var(--space-6);
-      background: var(--tertiary);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--tertiary);
-      outline-offset: -2px;
     }
   }
 }

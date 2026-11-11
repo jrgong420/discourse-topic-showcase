@@ -6,6 +6,7 @@ import ContestTopicOutlet from "../components/contest-topic-outlet.gjs";
 import ShowcaseCard from "../components/showcase-card.gjs";
 import ShowcaseCarouselOutlet from "../components/showcase-carousel-outlet.gjs";
 import ShowcaseSort from "../components/showcase-sort.gjs";
+import ShowcaseSubcategoriesOutlet from "../components/showcase-subcategories-outlet.gjs";
 import {
   layoutForCategory,
   layoutForCurrentRoute,
@@ -59,6 +60,16 @@ export default apiInitializer((api) => {
   // rendered on every discovery list; the component only shows on the homepage.
   if (settings.carousel_enabled && settings.carousel_filter_tags) {
     api.renderInOutlet("discovery-list-container-top", ShowcaseCarouselOutlet);
+  }
+
+  // Subcategory carousel above the topic list of the listed categories. The
+  // outlet is rendered on every discovery list; the component only shows on
+  // the pages of those categories.
+  if (settings.subcategory_carousel_categories) {
+    api.renderInOutlet(
+      "header-list-container-bottom",
+      ShowcaseSubcategoriesOutlet
+    );
   }
 
   // Contests: a strip under the title of the announcement topic, the list of

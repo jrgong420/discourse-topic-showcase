@@ -204,6 +204,17 @@ carousel_show_activity:
   type: bool
   default: false
 
+subcategory_carousel_categories:
+  type: list
+  list_type: category
+  default: ""
+
+subcategory_carousel_min_children:
+  type: integer
+  default: 2
+  min: 2
+  max: 12
+
 contest_enabled:
   type: bool
   default: false

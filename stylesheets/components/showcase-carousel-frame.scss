@@ -1,0 +1,166 @@
+@use "lib/viewport";
+
+// The shared carousel mechanics: arrows beside the slides, an Embla viewport
+// and pagination pills below. The caller sets how many slides are visible and
+// how much of the next one peeks in:
+// - `--tc-TopicShowcase-carousel-size-per-view`
+// - `--tc-TopicShowcase-carousel-size-peek` (a fraction of a slide)
+.showcase-carousel-frame {
+  --tc-TopicShowcase-carousel-size-arrow: 2.25rem;
+  --tc-TopicShowcase-carousel-size-slide: calc(
+    100% / var(--tc-TopicShowcase-carousel-size-per-view)
+  );
+
+  // The peek only applies when there are more slides than fit (`--peek`);
+  // otherwise the slides fill the row. Embla's track is pulled back by one
+  // gap, so the percentage is of the visible width plus one gap: n full
+  // slides, n - 1 gaps and the peek.
+  &.--peek {
+    --tc-TopicShowcase-carousel-size-slide: calc(
+      (
+          100% - var(--tc-TopicShowcase-card-space-gap) *
+            (1 - var(--tc-TopicShowcase-carousel-size-peek))
+        ) /
+        (
+          var(--tc-TopicShowcase-carousel-size-per-view) +
+            var(--tc-TopicShowcase-carousel-size-peek)
+        )
+    );
+  }
+
+  // Arrows sit over the slide edges; with room (wide screens) the stage keeps
+  // gutters for them and they sit outside the slides.
+  &__stage {
+    position: relative;
+
+    @include viewport.from(xl) {
+      padding-inline: calc(
+        var(--tc-TopicShowcase-carousel-size-arrow) + var(--space-2)
+      );
+    }
+  }
+
+  &__arrow.btn {
+    position: absolute;
+    inset-block-start: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tc-TopicShowcase-carousel-size-arrow);
+    height: var(--tc-TopicShowcase-carousel-size-arrow);
+    padding: 0;
+    border: 1px solid var(--primary-low);
+    border-radius: 50%;
+    background: var(--secondary);
+    box-shadow: var(--shadow-card);
+    color: var(--primary);
+    transform: translateY(-50%);
+
+    .d-icon {
+      color: inherit;
+    }
+
+    .discourse-no-touch &:hover,
+    &:focus-visible {
+      border-color: var(--tertiary);
+      background: var(--secondary);
+      color: var(--tertiary);
+    }
+
+    &.--prev {
+      inset-inline-start: var(--space-1);
+
+      @include viewport.from(xl) {
+        inset-inline-start: 0;
+      }
+    }
+
+    &.--next {
+      inset-inline-end: var(--space-1);
+
+      @include viewport.from(xl) {
+        inset-inline-end: 0;
+      }
+    }
+  }
+
+  // The scroll direction flips with the reading direction.
+  .rtl &__arrow .d-icon {
+    transform: scaleX(-1);
+  }
+
+  // The padding leaves room for the card shadow and focus outline, which the
+  // clipping viewport would cut off; the negative margin keeps the cards
+  // aligned with the page.
+  &__viewport {
+    margin: calc(var(--space-1) * -1);
+    padding: var(--space-1);
+    overflow: hidden;
+  }
+
+  // Embla's recommended layout: the track is pulled back by one gap, every
+  // slide brings its own gap on the leading side.
+  &__track {
+    display: flex;
+    margin-inline-start: calc(var(--tc-TopicShowcase-card-space-gap) * -1);
+
+    // Vertical scrolling stays with the page while swiping horizontally.
+    touch-action: pan-y pinch-zoom;
+  }
+
+  &__slide {
+    // The slide size includes the gap padding.
+    box-sizing: border-box;
+    flex: 0 0 var(--tc-TopicShowcase-carousel-size-slide);
+    min-width: 0;
+    padding-inline-start: var(--tc-TopicShowcase-card-space-gap);
+  }
+
+  // Whatever a slide holds is as tall as the slide, so all of them match.
+  &__slide > * {
+    height: 100%;
+  }
+
+  // One pill per scroll snap: the active one is wider and highlighted. The
+  // button is larger than the pill, so it is easy to hit.
+  &__pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-block-start: var(--space-2);
+  }
+
+  &__pill {
+    display: flex;
+    align-items: center;
+    height: var(--space-6);
+    padding: 0 var(--space-2);
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+
+    &::after {
+      content: "";
+      display: block;
+      width: var(--space-2);
+      height: var(--space-2);
+      border-radius: 100vmax;
+      background: var(--primary-low-mid);
+    }
+
+    .discourse-no-touch &:hover::after {
+      background: var(--primary-medium);
+    }
+
+    &.is-active::after {
+      width: var(--space-6);
+      background: var(--tertiary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--tertiary);
+      outline-offset: -2px;
+    }
+  }
+}

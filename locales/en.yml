@@ -35,14 +35,16 @@ en:
       carousel_display_expired_events: "Show topics whose calendar event is over (needs the Discourse Calendar plugin). Topics without event dates are never hidden. Needs the Discourse Calendar site setting that shows event dates on topic titles; without it topic lists carry no event dates and nothing is filtered."
       carousel_display_upcoming_events: "Show topics whose calendar event has not started yet (needs the Discourse Calendar plugin). Topics without event dates are never hidden. Needs the Discourse Calendar site setting that shows event dates on topic titles; without it topic lists carry no event dates and nothing is filtered."
       carousel_slides_per_view: "Number of cards visible at once on large screens. Narrow screens always show one card, with part of the next one visible."
-      carousel_scroll_by: "How far the arrows move the carousel: by one card, or by a full page of visible cards."
-      carousel_loop: "Continue from the last card back to the first, and the other way round."
+      carousel_scroll_by: "How far the arrows move the carousel: by one card, or by a full page of visible cards. Applies to both carousels (featured topics and subcategories)."
+      carousel_loop: "Continue from the last card back to the first, and the other way round. Applies to both carousels (featured topics and subcategories)."
       carousel_collapsible: "Let visitors collapse the carousel. The choice is remembered per browser, and a collapsed carousel shows how many topics are new since it was last open."
       carousel_show_excerpt: "Show the topic excerpt on carousel cards (clamped to two lines)."
       carousel_show_tags: "Show the tags on carousel cards (one line)."
       carousel_show_reply_count: "Show the reply count on carousel cards."
       carousel_show_likes: "Show the like count on carousel cards."
       carousel_show_activity: "Show the time of the last activity on carousel cards."
+      subcategory_carousel_categories: "Categories whose subcategories are shown as a carousel above the topic list. It replaces the category's own subcategory list on its pages. Subcategories of listed categories do not get a carousel of their own unless they are listed too."
+      subcategory_carousel_min_children: "Minimum number of subcategories the visitor can see for the carousel to appear. With fewer, the category's normal subcategory list (if any) is shown."
       contest_enabled: "Show contests: on the announcement topic a strip under the title and a list of all entries, and on every entry a link back to the announcement. Needs contest_tag_group, and announcement tags (contest_announcement_tags or carousel_filter_tags)."
       contest_tag_group: "Name of the tag group whose tags are contest tags. Entries and the announcement of a contest carry the same contest tag. Leave empty to turn contests off. The group must be visible to the visitors who should see contests."
       contest_announcement_tags: "A topic is a contest announcement when it carries a contest tag and all of these tags; other topics with a contest tag are entries. When empty, carousel_filter_tags is used instead. With neither, contests are not shown."
@@ -72,6 +74,11 @@ en:
       new_count:
         one: "%{count} new"
         other: "%{count} new"
+    subcategories:
+      label: "Subcategories of %{category}"
+      topic_count:
+        one: "%{number} topic"
+        other: "%{number} topics"
   contest:
     strip_label: "Contest entries"
     entries:

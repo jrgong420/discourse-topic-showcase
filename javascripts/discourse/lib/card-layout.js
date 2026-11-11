@@ -1,6 +1,9 @@
 const LAYOUTS = ["list", "grid"];
 
-function parseIdList(value) {
+/**
+ * Parses a pipe-separated id string from a list setting into numbers.
+ */
+export function parseIdList(value) {
   return String(value ?? "")
     .split("|")
     .map((id) => parseInt(id, 10))
