@@ -1,22 +1,47 @@
 @use "lib/viewport";
 
-// Featured topics carousel: a header bar (title, "new" badge, buttons) above a
-// row of showcase cards that Embla scrolls.
+// Featured topics carousel: a compact header chip above a row of showcase
+// cards that Embla scrolls, arrows beside the cards and pagination pills
+// below them.
 .showcase-carousel {
-  // Cards visible at once. Narrow screens show one card and a peek of the
-  // next one; the setting only applies where there is room for it.
+  // Cards per view, and how much of the next card peeks in at the edge (a
+  // fraction of a card). The peek only applies when there are more slides
+  // than fit (`--peek`); otherwise the cards fill the row. The per-view
+  // counts match `slidesPerView` in the component.
+  --tc-TopicShowcase-carousel-size-per-view: var(
+    --tc-TopicShowcase-carousel-size-slides-per-view
+  );
+  --tc-TopicShowcase-carousel-size-peek: 0.13;
+  --tc-TopicShowcase-carousel-size-arrow: 2.25rem;
   --tc-TopicShowcase-carousel-size-slide: calc(
-    100% / var(--tc-TopicShowcase-carousel-size-slides-per-view)
+    100% / var(--tc-TopicShowcase-carousel-size-per-view)
   );
   margin-block: 0 var(--space-4);
 
+  // Embla's track is pulled back by one gap, so the percentage is of the
+  // visible width plus one gap: n full cards, n - 1 gaps and the peek.
+  &.--peek {
+    --tc-TopicShowcase-carousel-size-slide: calc(
+      (
+          100% - var(--tc-TopicShowcase-card-space-gap) *
+            (1 - var(--tc-TopicShowcase-carousel-size-peek))
+        ) /
+        (
+          var(--tc-TopicShowcase-carousel-size-per-view) +
+            var(--tc-TopicShowcase-carousel-size-peek)
+        )
+    );
+  }
+
   @include viewport.until(sm) {
-    --tc-TopicShowcase-carousel-size-slide: 85%;
+    --tc-TopicShowcase-carousel-size-per-view: 1;
+    --tc-TopicShowcase-carousel-size-peek: 0.15;
   }
 
   @include viewport.between(sm, lg) {
-    --tc-TopicShowcase-carousel-size-slide: calc(
-      100% / min(var(--tc-TopicShowcase-carousel-size-slides-per-view), 2)
+    --tc-TopicShowcase-carousel-size-per-view: min(
+      var(--tc-TopicShowcase-carousel-size-slides-per-view),
+      2
     );
   }
 
@@ -29,24 +54,104 @@
     }
   }
 
+  // Header. Expanded it is a plain inline heading (star, title, collapse
+  // chevron); collapsed the toggle becomes a chip that summarises the
+  // carousel. The heading itself only resets the parent theme's h2 styles.
   &__header {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--primary-low);
-    border-radius: var(--tc-TopicShowcase-card-border-radius);
-    background: var(--d-content-background);
+    margin: 0 0 var(--space-2);
+    padding: 0;
+    border: 0;
+    color: var(--primary);
+    font-family: inherit;
+    font-size: var(--font-up-1);
+    font-weight: 600;
+    line-height: var(--line-height-medium);
+  }
+
+  &__icon,
+  &__chevron {
+    flex: none;
+    color: var(--tertiary);
+  }
+
+  &__chevron {
+    font-size: var(--font-down-1);
   }
 
   &__title {
     min-width: 0;
-    margin: 0;
-    color: var(--primary);
-    font-size: var(--font-up-1);
-    font-weight: 600;
-    line-height: var(--line-height-medium);
     overflow-wrap: break-word;
+  }
+
+  &__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    max-width: 100%;
+
+    // The inline padding is pulled back, so the icon lines up with the cards.
+    margin: 0 calc(var(--space-2) * -1);
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid transparent;
+    border-radius: 100vmax;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--tertiary-very-low);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--tertiary);
+      outline-offset: 2px;
+    }
+  }
+
+  // Collapsed: a chip as wide as its content, in the accent colour.
+  &.is-collapsed &__toggle {
+    margin: 0;
+    padding: var(--space-1) var(--space-3);
+    border-color: var(--tertiary-low);
+    background: var(--tertiary-very-low);
+
+    &:hover {
+      border-color: var(--tertiary-medium);
+      background: var(--tertiary-low);
+    }
+  }
+
+  &__count {
+    flex: none;
+    color: var(--tertiary);
+    font-size: var(--font-down-1);
+    font-weight: 700;
+  }
+
+  // Overlapping stack of round thumbnails.
+  &__thumbnails {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+  }
+
+  &__thumbnail {
+    box-sizing: border-box;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--tertiary-very-low);
+    border-radius: 50%;
+    background: var(--primary-low);
+    object-fit: cover;
+
+    & + & {
+      margin-inline-start: calc(var(--space-2) * -1);
+    }
   }
 
   // Same pairing core uses for its notification badges.
@@ -62,31 +167,75 @@
     white-space: nowrap;
   }
 
-  &__actions {
-    display: flex;
-    flex: none;
-    align-items: center;
-    gap: var(--space-1);
-    margin-inline-start: auto;
-  }
-
-  // The scroll direction flips with the reading direction.
-  .rtl &__prev .d-icon,
-  .rtl &__next .d-icon {
-    transform: scaleX(-1);
-  }
-
-  &__body {
-    margin-block-start: var(--space-3);
-  }
-
   &.is-collapsed &__body {
     display: none;
   }
 
+  // Arrows sit over the card edges; with room (wide screens) the stage keeps
+  // gutters for them and they sit outside the cards.
+  &__stage {
+    position: relative;
+
+    @include viewport.from(xl) {
+      padding-inline: calc(
+        var(--tc-TopicShowcase-carousel-size-arrow) + var(--space-2)
+      );
+    }
+  }
+
+  &__arrow.btn {
+    position: absolute;
+    inset-block-start: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tc-TopicShowcase-carousel-size-arrow);
+    height: var(--tc-TopicShowcase-carousel-size-arrow);
+    padding: 0;
+    border: 1px solid var(--primary-low);
+    border-radius: 50%;
+    background: var(--secondary);
+    box-shadow: var(--shadow-card);
+    color: var(--primary);
+    transform: translateY(-50%);
+
+    .d-icon {
+      color: inherit;
+    }
+
+    .discourse-no-touch &:hover,
+    &:focus-visible {
+      border-color: var(--tertiary);
+      background: var(--secondary);
+      color: var(--tertiary);
+    }
+
+    &.--prev {
+      inset-inline-start: var(--space-1);
+
+      @include viewport.from(xl) {
+        inset-inline-start: 0;
+      }
+    }
+
+    &.--next {
+      inset-inline-end: var(--space-1);
+
+      @include viewport.from(xl) {
+        inset-inline-end: 0;
+      }
+    }
+  }
+
+  // The scroll direction flips with the reading direction.
+  .rtl &__arrow .d-icon {
+    transform: scaleX(-1);
+  }
+
   // The padding leaves room for the card shadow and focus outline, which the
   // clipping viewport would cut off; the negative margin keeps the cards
-  // aligned with the header bar.
+  // aligned with the page.
   &__viewport {
     margin: calc(var(--space-1) * -1);
     padding: var(--space-1);
@@ -113,5 +262,47 @@
 
   &__slide > .showcase-card {
     height: 100%;
+  }
+
+  // One pill per scroll snap: the active one is wider and highlighted. The
+  // button is larger than the pill, so it is easy to hit.
+  &__pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-block-start: var(--space-2);
+  }
+
+  &__pill {
+    display: flex;
+    align-items: center;
+    height: var(--space-6);
+    padding: 0 var(--space-2);
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+
+    &::after {
+      content: "";
+      display: block;
+      width: var(--space-2);
+      height: var(--space-2);
+      border-radius: 100vmax;
+      background: var(--primary-low-mid);
+    }
+
+    .discourse-no-touch &:hover::after {
+      background: var(--primary-medium);
+    }
+
+    &.is-active::after {
+      width: var(--space-6);
+      background: var(--tertiary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--tertiary);
+      outline-offset: -2px;
+    }
   }
 }

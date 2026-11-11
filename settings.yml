@@ -149,3 +149,23 @@ carousel_loop:
 carousel_collapsible:
   type: bool
   default: true
+
+carousel_show_excerpt:
+  type: bool
+  default: false
+
+carousel_show_tags:
+  type: bool
+  default: false
+
+carousel_show_reply_count:
+  type: bool
+  default: false
+
+carousel_show_likes:
+  type: bool
+  default: false
+
+carousel_show_activity:
+  type: bool
+  default: false

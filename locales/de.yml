@@ -33,6 +33,11 @@ de:
       carousel_slides_per_view: "Anzahl der gleichzeitig sichtbaren Karten auf großen Bildschirmen. Schmale Bildschirme zeigen immer eine Karte, von der nächsten ist ein Teil sichtbar."
       carousel_loop: "Von der letzten Karte wieder zur ersten springen und umgekehrt."
       carousel_collapsible: "Besucher können das Karussell einklappen. Die Wahl wird pro Browser gespeichert, und ein eingeklapptes Karussell zeigt an, wie viele Themen seit dem letzten Öffnen neu sind."
+      carousel_show_excerpt: "Auszug des Themas auf den Karussell-Karten anzeigen (auf zwei Zeilen begrenzt)."
+      carousel_show_tags: "Tags auf den Karussell-Karten anzeigen (eine Zeile)."
+      carousel_show_reply_count: "Anzahl der Antworten auf den Karussell-Karten anzeigen."
+      carousel_show_likes: "Anzahl der Likes auf den Karussell-Karten anzeigen."
+      carousel_show_activity: "Zeitpunkt der letzten Aktivität auf den Karussell-Karten anzeigen."
   showcase:
     sort:
       label: "Sortieren nach"
@@ -49,6 +54,7 @@ de:
       expand: "%{title} ausklappen"
       previous: "Zurück"
       next: "Weiter"
+      pagination_label: "Zu Kartengruppe %{number} wechseln"
       slide_label: "%{current} von %{total}"
       new_count:
         one: "%{count} neu"

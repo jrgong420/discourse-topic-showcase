@@ -1,13 +1,17 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
+import { fn } from "@ember/helper";
+import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { service } from "@ember/service";
 import { modifier } from "ember-modifier";
 import { settings, themePrefix } from "virtual:theme";
 import { ajax } from "discourse/lib/ajax";
 import TopicList from "discourse/models/topic-list";
+import { eq } from "discourse/truth-helpers";
 import DButton from "discourse/ui-kit/d-button";
 import dConcatClass from "discourse/ui-kit/helpers/d-concat-class";
+import dIcon from "discourse/ui-kit/helpers/d-icon";
 import { i18n } from "discourse-i18n";
 import {
   readCollapsed,
@@ -22,6 +26,9 @@ import ShowcaseCard from "./showcase-card.gjs";
 // Core's ordering keywords for the filter endpoint. "random" is applied on the
 // client, so it fetches by activity like "latest".
 const FILTER_ORDERS = { latest: "activity", created: "created" };
+
+// Thumbnails in the collapsed chip.
+const CHIP_THUMBNAILS = 3;
 
 // Ids for the ARIA references between header and body.
 let nextId = 0;
@@ -41,6 +48,7 @@ function filterTags() {
  * it is rendered when it should show.
  */
 export default class ShowcaseCarousel extends Component {
+  @service capabilities;
   @service currentUser;
   @service store;
 
@@ -49,6 +57,9 @@ export default class ShowcaseCarousel extends Component {
   @tracked seenAt = null;
   @tracked canScrollPrev = false;
   @tracked canScrollNext = false;
+  // One entry per Embla scroll snap, for the pagination pills.
+  @tracked pills = [];
+  @tracked selectedSnap = 0;
 
   embla = null;
   id = nextId++;
@@ -66,6 +77,17 @@ export default class ShowcaseCarousel extends Component {
     const sync = () => {
       this.canScrollPrev = embla.canScrollPrev();
       this.canScrollNext = embla.canScrollNext();
+      this.selectedSnap = embla.selectedScrollSnap();
+
+      const count = embla.scrollSnapList().length;
+      if (count !== this.pills.length) {
+        this.pills = Array.from({ length: count }, (_, index) => ({
+          index,
+          label: i18n(themePrefix("showcase.carousel.pagination_label"), {
+            number: index + 1,
+          }),
+        }));
+      }
     };
 
     loadEmbla()
@@ -160,6 +182,51 @@ export default class ShowcaseCarousel extends Component {
     return !this.isCollapsed && (this.canScrollPrev || this.canScrollNext);
   }
 
+  // One pill per scroll snap; a single snap has nothing to paginate.
+  get showPills() {
+    return !this.isCollapsed && this.pills.length > 1;
+  }
+
+  // Cards visible at once, matching the breakpoints in showcase-carousel.scss.
+  get slidesPerView() {
+    const { viewport } = this.capabilities;
+    const configured = settings.carousel_slides_per_view;
+
+    if (viewport.lg) {
+      return configured;
+    }
+
+    return viewport.sm ? Math.min(configured, 2) : 1;
+  }
+
+  // The edge of the next card shows only when there is a next card to peek at;
+  // when every slide fits, the cards fill the row instead.
+  get hasPeek() {
+    return this.slides.length > this.slidesPerView;
+  }
+
+  // Up to three thumbnails for the collapsed chip, from the first topics that
+  // have an image.
+  get chipThumbnails() {
+    const urls = [];
+
+    for (const { topic } of this.slides) {
+      const thumbnails = [...(topic.thumbnails ?? [])].sort(
+        (a, b) => a.width - b.width
+      );
+      const url = thumbnails[0]?.url ?? topic.image_url;
+
+      if (url) {
+        urls.push({ id: topic.id, url });
+      }
+      if (urls.length === CHIP_THUMBNAILS) {
+        break;
+      }
+    }
+
+    return urls;
+  }
+
   get toggleLabel() {
     return i18n(
       themePrefix(
@@ -242,6 +309,8 @@ export default class ShowcaseCarousel extends Component {
     // The slides go away with the collapse, and take Embla with them.
     this.canScrollPrev = false;
     this.canScrollNext = false;
+    this.pills = [];
+    this.selectedSnap = 0;
   }
 
   @action
@@ -252,6 +321,11 @@ export default class ShowcaseCarousel extends Component {
   @action
   scrollNext() {
     this.embla?.scrollNext();
+  }
+
+  @action
+  scrollToSnap(index) {
+    this.embla?.scrollTo(index);
   }
 
   @action
@@ -283,82 +357,135 @@ export default class ShowcaseCarousel extends Component {
         class={{dConcatClass
           "showcase-carousel"
           (if this.isCollapsed "is-collapsed" "is-expanded")
+          (if this.hasPeek "--peek")
         }}
       >
-        <div class="showcase-carousel__header">
-          <h2 class="showcase-carousel__title" id={{this.titleId}}>
-            {{this.title}}
-          </h2>
-
-          {{#if this.isCollapsed}}
-            {{#if this.newCount}}
-              <span class="showcase-carousel__badge">
-                {{i18n
-                  (themePrefix "showcase.carousel.new_count")
-                  count=this.newCount
-                }}
+        <h2 class="showcase-carousel__header">
+          {{#if this.collapsible}}
+            <button
+              aria-controls={{this.bodyId}}
+              aria-expanded={{if this.isCollapsed "false" "true"}}
+              class="showcase-carousel__toggle"
+              title={{this.toggleLabel}}
+              type="button"
+              {{on "click" this.toggle}}
+            >
+              {{dIcon "star" class="showcase-carousel__icon"}}
+              <span class="showcase-carousel__title" id={{this.titleId}}>
+                {{this.title}}
               </span>
-            {{/if}}
+
+              {{#if this.isCollapsed}}
+                <span
+                  class="showcase-carousel__count"
+                >{{this.slides.length}}</span>
+
+                {{#if this.chipThumbnails.length}}
+                  <span
+                    aria-hidden="true"
+                    class="showcase-carousel__thumbnails"
+                  >
+                    {{#each this.chipThumbnails key="id" as |thumbnail|}}
+                      <img
+                        alt=""
+                        class="showcase-carousel__thumbnail"
+                        src={{thumbnail.url}}
+                      />
+                    {{/each}}
+                  </span>
+                {{/if}}
+
+                {{#if this.newCount}}
+                  <span class="showcase-carousel__badge">
+                    {{i18n
+                      (themePrefix "showcase.carousel.new_count")
+                      count=this.newCount
+                    }}
+                  </span>
+                {{/if}}
+              {{/if}}
+
+              {{dIcon
+                (if this.isCollapsed "chevron-down" "chevron-up")
+                class="showcase-carousel__chevron"
+              }}
+            </button>
+          {{else}}
+            {{dIcon "star" class="showcase-carousel__icon"}}
+            <span class="showcase-carousel__title" id={{this.titleId}}>
+              {{this.title}}
+            </span>
           {{/if}}
-
-          <div class="showcase-carousel__actions">
-            {{#if this.showNav}}
-              <DButton
-                class="btn-flat showcase-carousel__prev"
-                @action={{this.scrollPrev}}
-                @icon="chevron-left"
-                @translatedAriaLabel={{i18n
-                  (themePrefix "showcase.carousel.previous")
-                }}
-                @translatedTitle={{i18n
-                  (themePrefix "showcase.carousel.previous")
-                }}
-              />
-              <DButton
-                class="btn-flat showcase-carousel__next"
-                @action={{this.scrollNext}}
-                @icon="chevron-right"
-                @translatedAriaLabel={{i18n
-                  (themePrefix "showcase.carousel.next")
-                }}
-                @translatedTitle={{i18n (themePrefix "showcase.carousel.next")}}
-              />
-            {{/if}}
-
-            {{#if this.collapsible}}
-              <DButton
-                class="btn-flat showcase-carousel__toggle"
-                @action={{this.toggle}}
-                @ariaControls={{this.bodyId}}
-                @ariaExpanded={{if this.isCollapsed false true}}
-                @icon={{if this.isCollapsed "chevron-down" "chevron-up"}}
-                @translatedAriaLabel={{this.toggleLabel}}
-                @translatedTitle={{this.toggleLabel}}
-              />
-            {{/if}}
-          </div>
-        </div>
+        </h2>
 
         <div class="showcase-carousel__body" id={{this.bodyId}}>
           {{#unless this.isCollapsed}}
-            <div class="showcase-carousel__viewport" {{this.setupEmbla}}>
-              <div class="showcase-carousel__track">
-                {{#each this.slides key="topic.id" as |slide|}}
-                  <div
-                    aria-label={{slide.label}}
-                    aria-roledescription="slide"
-                    class="showcase-carousel__slide"
-                    role="group"
-                  >
-                    <ShowcaseCard
-                      @eventDate={{true}}
-                      @layout="grid"
-                      @topic={{slide.topic}}
-                    />
-                  </div>
+            <div class="showcase-carousel__stage">
+              {{#if this.showNav}}
+                <DButton
+                  class="showcase-carousel__arrow --prev"
+                  @action={{this.scrollPrev}}
+                  @icon="chevron-left"
+                  @translatedAriaLabel={{i18n
+                    (themePrefix "showcase.carousel.previous")
+                  }}
+                  @translatedTitle={{i18n
+                    (themePrefix "showcase.carousel.previous")
+                  }}
+                />
+              {{/if}}
+
+              <div class="showcase-carousel__viewport" {{this.setupEmbla}}>
+                <div class="showcase-carousel__track">
+                  {{#each this.slides key="topic.id" as |slide|}}
+                    <div
+                      aria-label={{slide.label}}
+                      aria-roledescription="slide"
+                      class="showcase-carousel__slide"
+                      role="group"
+                    >
+                      <ShowcaseCard
+                        @context="carousel"
+                        @eventDate={{true}}
+                        @layout="grid"
+                        @topic={{slide.topic}}
+                      />
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+
+              {{#if this.showNav}}
+                <DButton
+                  class="showcase-carousel__arrow --next"
+                  @action={{this.scrollNext}}
+                  @icon="chevron-right"
+                  @translatedAriaLabel={{i18n
+                    (themePrefix "showcase.carousel.next")
+                  }}
+                  @translatedTitle={{i18n
+                    (themePrefix "showcase.carousel.next")
+                  }}
+                />
+              {{/if}}
+            </div>
+
+            {{#if this.showPills}}
+              <div class="showcase-carousel__pills">
+                {{#each this.pills key="index" as |pill|}}
+                  <button
+                    aria-current={{if (eq pill.index this.selectedSnap) "true"}}
+                    aria-label={{pill.label}}
+                    class={{dConcatClass
+                      "showcase-carousel__pill"
+                      (if (eq pill.index this.selectedSnap) "is-active")
+                    }}
+                    type="button"
+                    {{on "click" (fn this.scrollToSnap pill.index)}}
+                  ></button>
                 {{/each}}
               </div>
-            </div>
+            {{/if}}
           {{/unless}}
         </div>
       </section>

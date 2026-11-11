@@ -238,3 +238,56 @@
     z-index: 1;
   }
 }
+
+// Carousel context: every card has the same height whatever its content, so
+// the thumbnail keeps one aspect ratio and all text is clamped, with the
+// space of each shown part reserved even when it is empty.
+.showcase-card.--carousel {
+  &.--grid .showcase-card__media {
+    aspect-ratio: 16 / 10;
+  }
+
+  .showcase-card__body {
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .showcase-card__category {
+    flex-wrap: nowrap;
+    min-height: calc(var(--font-down-1) * var(--line-height-medium));
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .showcase-card__title {
+    display: -webkit-box;
+    height: calc(2em * var(--line-height-medium));
+    overflow: hidden;
+    font-size: var(--font-0);
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .showcase-card__excerpt {
+    min-height: calc(2em * var(--line-height-large));
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+  }
+
+  .showcase-card__tags {
+    height: calc(var(--font-down-1) * var(--line-height-large));
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .showcase-card__footer {
+    flex-wrap: nowrap;
+    min-height: var(--space-6);
+    overflow: hidden;
+  }
+
+  .showcase-card__meta {
+    flex-wrap: nowrap;
+  }
+}

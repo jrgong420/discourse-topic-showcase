@@ -5,7 +5,7 @@ import UnreadIndicator from "discourse/components/topic-list/unread-indicator";
 import TopicPostBadges from "discourse/components/topic-post-badges";
 import TopicStatus from "discourse/components/topic-status";
 import { shortDate, smartShortDate } from "discourse/lib/formatter";
-import { eq, gt, or } from "discourse/truth-helpers";
+import { eq, gt } from "discourse/truth-helpers";
 import DUserLink from "discourse/ui-kit/d-user-link";
 import dAvatar from "discourse/ui-kit/helpers/d-avatar";
 import dCategoryLink from "discourse/ui-kit/helpers/d-category-link";
@@ -30,6 +30,11 @@ const GRID_THUMBNAIL_WIDTH_FACTOR = 1.5;
  * @param {"list"|"grid"} @layout
  * @param {boolean} [@eventDate] Show the start date of the topic's calendar
  *   event (`event_starts_at`) as a badge over the thumbnail.
+ * @param {"list"|"carousel"} [@context] Where the card is used. In the
+ *   "carousel" context the card has a fixed height (clamped text) and reads
+ *   the carousel_show_* settings for excerpt, tags, replies, likes and
+ *   activity instead of the global show_* ones; views and publish date are
+ *   not shown.
  */
 export default class ShowcaseCard extends Component {
   get layout() {
@@ -55,13 +60,43 @@ export default class ShowcaseCard extends Component {
     );
   }
 
+  get isCarousel() {
+    return this.args.context === "carousel";
+  }
+
+  // The parts that differ between the carousel and the topic lists. Everything
+  // else on the card keeps using the global show_* settings.
+  get showReplyCount() {
+    return this.isCarousel
+      ? settings.carousel_show_reply_count
+      : settings.show_reply_count;
+  }
+
+  get showLikes() {
+    return this.isCarousel ? settings.carousel_show_likes : settings.show_likes;
+  }
+
+  get showViews() {
+    return !this.isCarousel && settings.show_views;
+  }
+
+  get showActivity() {
+    return this.isCarousel
+      ? settings.carousel_show_activity
+      : settings.show_activity;
+  }
+
+  get showPublishDate() {
+    return !this.isCarousel && settings.show_publish_date;
+  }
+
   get hasMetadata() {
     return (
-      settings.show_reply_count ||
-      settings.show_likes ||
-      settings.show_views ||
-      settings.show_activity ||
-      settings.show_publish_date
+      this.showReplyCount ||
+      this.showLikes ||
+      this.showViews ||
+      this.showActivity ||
+      this.showPublishDate
     );
   }
 
@@ -85,8 +120,32 @@ export default class ShowcaseCard extends Component {
     return { iso: date.toISOString(), label: smartShortDate(date, shortDate) };
   }
 
+  // Carousel cards reserve the space of the parts they show (the elements
+  // render even when empty), so every card has the same height.
   get showExcerpt() {
-    return settings.show_excerpt && this.args.topic.hasExcerpt;
+    return this.isCarousel
+      ? settings.carousel_show_excerpt
+      : settings.show_excerpt && this.args.topic.hasExcerpt;
+  }
+
+  get showTags() {
+    return this.isCarousel
+      ? settings.carousel_show_tags
+      : settings.show_tags && this.args.topic.tags?.length;
+  }
+
+  get showCategory() {
+    return (
+      settings.show_category && (this.args.topic.category || this.isCarousel)
+    );
+  }
+
+  get showFooter() {
+    return (
+      this.showAuthor ||
+      this.hasMetadata ||
+      (this.isCarousel && settings.show_author)
+    );
   }
 
   <template>
@@ -96,6 +155,7 @@ export default class ShowcaseCard extends Component {
         (if (eq this.layout "grid") "--grid" "--list")
         (if this.thumbnail "--has-thumbnail" "--no-thumbnail")
         (if @topic.visited "--visited")
+        (if this.isCarousel "--carousel")
       }}
       data-topic-id={{@topic.id}}
       ...attributes
@@ -128,12 +188,12 @@ export default class ShowcaseCard extends Component {
       </div>
 
       <div class="showcase-card__body">
-        {{#if settings.show_category}}
-          {{#if @topic.category}}
-            <div class="showcase-card__category">
+        {{#if this.showCategory}}
+          <div class="showcase-card__category">
+            {{#if @topic.category}}
               {{dCategoryLink @topic.category}}
-            </div>
-          {{/if}}
+            {{/if}}
+          </div>
         {{/if}}
 
         <h3 class="showcase-card__title">
@@ -155,19 +215,21 @@ export default class ShowcaseCard extends Component {
 
         {{#if this.showExcerpt}}
           <p class="showcase-card__excerpt">
-            {{dDirSpan @topic.escapedExcerpt htmlSafe="true"}}
+            {{#if @topic.hasExcerpt}}
+              {{dDirSpan @topic.escapedExcerpt htmlSafe="true"}}
+            {{/if}}
           </p>
         {{/if}}
 
-        {{#if settings.show_tags}}
-          {{#if @topic.tags.length}}
-            <div class="showcase-card__tags">
+        {{#if this.showTags}}
+          <div class="showcase-card__tags">
+            {{#if @topic.tags.length}}
               {{dDiscourseTags @topic mode="list"}}
-            </div>
-          {{/if}}
+            {{/if}}
+          </div>
         {{/if}}
 
-        {{#if (or this.showAuthor this.hasMetadata)}}
+        {{#if this.showFooter}}
           <div class="showcase-card__footer">
             {{#if this.showAuthor}}
               <DUserLink class="showcase-card__author" @user={{@topic.creator}}>
@@ -180,7 +242,7 @@ export default class ShowcaseCard extends Component {
 
             {{#if this.hasMetadata}}
               <ul class="showcase-card__meta">
-                {{#if settings.show_reply_count}}
+                {{#if this.showReplyCount}}
                   <li
                     class="showcase-card__meta-item --replies"
                     title={{i18n (themePrefix "showcase.replies")}}
@@ -192,7 +254,7 @@ export default class ShowcaseCard extends Component {
                     {{dNumber @topic.replyCount noTitle="true"}}
                   </li>
                 {{/if}}
-                {{#if settings.show_likes}}
+                {{#if this.showLikes}}
                   {{#if (gt @topic.like_count 0)}}
                     <li
                       class="showcase-card__meta-item --likes"
@@ -206,7 +268,7 @@ export default class ShowcaseCard extends Component {
                     </li>
                   {{/if}}
                 {{/if}}
-                {{#if settings.show_views}}
+                {{#if this.showViews}}
                   <li
                     class="showcase-card__meta-item --views"
                     title={{i18n (themePrefix "showcase.views")}}
@@ -218,7 +280,7 @@ export default class ShowcaseCard extends Component {
                     {{dNumber @topic.views noTitle="true"}}
                   </li>
                 {{/if}}
-                {{#if settings.show_activity}}
+                {{#if this.showActivity}}
                   <li
                     class="showcase-card__meta-item --activity"
                     title={{i18n (themePrefix "showcase.activity")}}
@@ -234,7 +296,7 @@ export default class ShowcaseCard extends Component {
                     }}
                   </li>
                 {{/if}}
-                {{#if settings.show_publish_date}}
+                {{#if this.showPublishDate}}
                   <li
                     class="showcase-card__meta-item --published"
                     title={{i18n (themePrefix "showcase.published")}}
