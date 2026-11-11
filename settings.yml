@@ -249,3 +249,81 @@ contest_entries_position:
   choices:
     - top
     - after_first_post
+
+homepage_enabled:
+  type: bool
+  default: false
+
+homepage_featured_carousel:
+  type: bool
+  default: true
+
+homepage_releases_tags:
+  type: list
+  list_type: tag
+  default: ""
+
+homepage_releases_count:
+  type: integer
+  default: 3
+  min: 0
+  max: 10
+
+homepage_gallery_category:
+  type: list
+  list_type: category
+  default: ""
+
+homepage_gallery_count:
+  type: integer
+  default: 3
+  min: 0
+  max: 12
+
+homepage_latest_count:
+  type: integer
+  default: 8
+  min: 0
+  max: 30
+
+homepage_partners_tags:
+  type: list
+  list_type: tag
+  default: ""
+
+homepage_partners_category:
+  type: list
+  list_type: category
+  default: ""
+
+homepage_partners_count:
+  type: integer
+  default: 6
+  min: 0
+  max: 12
+
+homepage_deals_tags:
+  type: list
+  list_type: tag
+  default: ""
+
+homepage_deals_count:
+  type: integer
+  default: 4
+  min: 0
+  max: 10
+
+homepage_docs_category:
+  type: list
+  list_type: category
+  default: ""
+
+homepage_docs_count:
+  type: integer
+  default: 8
+  min: 0
+  max: 30
+
+homepage_docs_descriptions:
+  type: bool
+  default: false

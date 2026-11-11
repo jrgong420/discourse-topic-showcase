@@ -1,0 +1,293 @@
+// Panels of the custom homepage (homepage-blocks outlet).
+// Core 2026.7 has no lib/container mixins yet, so the container queries are
+// written out with the library breakpoint values (sm = 40rem).
+.homepage-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--secondary);
+  border: var(--tc-TopicShowcase-card-size-border) solid var(--primary-low);
+  border-radius: var(--tc-TopicShowcase-card-border-radius);
+  container-type: inline-size;
+  container-name: homepage-panel;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--primary-low);
+  }
+
+  &__icon {
+    display: inline-flex;
+    color: var(--tertiary);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--font-up-1);
+    line-height: var(--line-height-medium);
+  }
+
+  &__body {
+    padding: var(--space-3) var(--space-4);
+
+    &:not(:has(*)) {
+      display: none;
+    }
+  }
+
+  &__footer {
+    padding: var(--space-2) var(--space-4);
+    border-top: 1px solid var(--primary-low);
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-down-1);
+    font-weight: bold;
+
+    .d-icon {
+      font-size: var(--font-down-2);
+    }
+  }
+}
+
+.homepage-panel-error__message {
+  margin: 0 0 var(--space-2);
+  color: var(--primary-medium);
+}
+
+.homepage-panel-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  &.--cards,
+  &.--tiles {
+    display: grid;
+    gap: var(--tc-TopicShowcase-card-space-gap);
+  }
+
+  &.--cards {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, var(--tc-TopicShowcase-card-size-min-width)), 1fr)
+    );
+  }
+
+  &.--tiles {
+    grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  &__media,
+  &__line {
+    display: block;
+    border-radius: var(--d-border-radius);
+    background: var(--primary-low);
+    animation: homepage-panel-pulse 1.4s ease-in-out infinite;
+  }
+
+  &__media {
+    aspect-ratio: var(--tc-TopicShowcase-card-ratio-thumbnail);
+  }
+
+  .--tile &__media {
+    aspect-ratio: 3 / 2;
+  }
+
+  &__line {
+    height: 0.8em;
+
+    &.--long {
+      width: 85%;
+    }
+
+    &.--short {
+      width: 40%;
+    }
+  }
+}
+
+@keyframes homepage-panel-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homepage-panel-skeleton__media,
+  .homepage-panel-skeleton__line {
+    animation: none;
+  }
+}
+
+// Topic rows: title on one or two lines, meta line under it.
+.homepage-topic-panel {
+  &__rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: 0;
+    list-style: none;
+  }
+
+  &__row {
+    display: flex;
+    gap: var(--space-2);
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  &__avatar {
+    flex: 0 0 auto;
+    padding-top: var(--space-half, 0.125rem);
+  }
+
+  &__row-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+  }
+
+  &__title {
+    display: -webkit-box;
+    overflow: hidden;
+    color: var(--primary);
+    font-weight: bold;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    color: var(--primary-medium);
+    font-size: var(--font-down-1);
+
+    .badge-category__wrapper {
+      min-width: 0;
+      max-width: 100%;
+    }
+  }
+
+  &__replies {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  // Showcase cards in a grid that follows the panel width.
+  &__cards {
+    display: grid;
+    gap: var(--tc-TopicShowcase-card-space-gap);
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, var(--tc-TopicShowcase-card-size-min-width)), 1fr)
+    );
+  }
+
+  // Logo tiles: two columns in a narrow side column, more when there is room.
+  &__tiles {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+    list-style: none;
+
+    @container homepage-panel (min-width: 40rem) {
+      grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    }
+  }
+
+  &__tile-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    height: 100%;
+    color: var(--primary);
+
+    &:hover .homepage-topic-panel__tile-media,
+    &:focus-visible .homepage-topic-panel__tile-media {
+      border-color: var(--tertiary);
+    }
+  }
+
+  &__tile-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 3 / 2;
+    padding: var(--space-2);
+    overflow: hidden;
+    background: var(--primary-very-low);
+    border: 1px solid var(--primary-low);
+    border-radius: var(--d-border-radius);
+    color: var(--primary-low-mid);
+    font-size: var(--font-up-3);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__tile-title {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: var(--font-down-1);
+    font-weight: bold;
+    line-height: var(--line-height-medium);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}
+
+// Table of contents of a category tree.
+.homepage-category-panel {
+  &__rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+    list-style: none;
+  }
+
+  &__name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  &__count {
+    flex: 0 0 auto;
+    color: var(--primary-medium);
+    font-size: var(--font-down-1);
+  }
+
+  &__description {
+    display: -webkit-box;
+    margin: var(--space-1) 0 0;
+    overflow: hidden;
+    color: var(--primary-medium);
+    font-size: var(--font-down-1);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}

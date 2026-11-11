@@ -12,9 +12,10 @@
   },
   "modifiers": {
     "serialize_topic_excerpts": true,
-    "topic_thumbnail_sizes": [
-      "400x300",
-      "800x600"
-    ]
+    "topic_thumbnail_sizes": ["400x300", "800x600"],
+    "custom_homepage": {
+      "type": "setting",
+      "value": "homepage_enabled"
+    }
   }
 }
