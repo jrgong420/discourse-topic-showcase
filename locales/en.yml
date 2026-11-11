@@ -19,11 +19,15 @@ en:
       show_views: "Show the view count on cards."
       show_activity: "Show the time of the last activity on cards."
       show_publish_date: "Show the publish date on cards."
-      show_sort_bar: "Show sort buttons (replies, views, activity) above card lists."
+      show_sort_bar: "Show a sort dropdown above card lists."
       grid_card_min_width: "Minimum card width in pixels for the grid layout. Cards grow to fill the row."
       thumbnail_placeholder_icon: "Icon shown on cards whose topic has no image. Use an icon from the default icon set, or add the icon via svg_icons."
       card_border_radius: "Corner rounding of cards."
   showcase:
+    sort:
+      label: "Sort by"
+      default: "Default"
+      reverse: "Reverse order"
     replies: "Replies"
     likes: "Likes"
     views: "Views"

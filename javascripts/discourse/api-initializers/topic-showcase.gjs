@@ -1,10 +1,8 @@
 import { settings } from "virtual:theme";
-import HeaderActivityCell from "discourse/components/topic-list/header/activity-cell";
-import HeaderRepliesCell from "discourse/components/topic-list/header/replies-cell";
 import HeaderTopicCell from "discourse/components/topic-list/header/topic-cell";
-import HeaderViewsCell from "discourse/components/topic-list/header/views-cell";
 import { apiInitializer } from "discourse/lib/api";
 import ShowcaseCard from "../components/showcase-card.gjs";
+import ShowcaseSortHeader from "../components/showcase-sort-header.gjs";
 import { buildLayoutConfig, resolveLayout } from "../lib/card-layout.js";
 
 const BULK_SELECT_COLUMN = "bulk-select";
@@ -26,15 +24,10 @@ const GridCell = <template>
 
 const CELLS = { list: ListCell, grid: GridCell };
 
-// Sort columns exist only in the header (the sort bar above the cards); they
-// render nothing in the rows.
+// The sort column exists only in the header (the dropdown above the cards);
+// it renders nothing in the rows.
 const NoCell = <template></template>;
-
-const SORT_COLUMNS = [
-  ["showcase-sort-replies", HeaderRepliesCell],
-  ["showcase-sort-views", HeaderViewsCell],
-  ["showcase-sort-activity", HeaderActivityCell],
-];
+const SORT_COLUMN = "showcase-sort";
 
 function ancestorIdsOf(category) {
   const ids = [];
@@ -90,11 +83,11 @@ export default apiInitializer((api) => {
     value.add(CARD_COLUMN, { header: HeaderTopicCell, item: CELLS[layout] });
 
     if (settings.show_sort_bar) {
-      let previous = CARD_COLUMN;
-      for (const [key, header] of SORT_COLUMNS) {
-        value.add(key, { header, item: NoCell }, { after: previous });
-        previous = key;
-      }
+      value.add(
+        SORT_COLUMN,
+        { header: ShowcaseSortHeader, item: NoCell },
+        { after: CARD_COLUMN }
+      );
     }
 
     return value;

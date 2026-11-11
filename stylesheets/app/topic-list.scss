@@ -1,3 +1,5 @@
+@use "lib/viewport";
+
 // The topic list <table> when it renders showcase cards.
 // Layout lives on the list; the card itself is styled in components/showcase-card.
 //
@@ -52,26 +54,14 @@
       }
     }
 
-    // guard: Horizon hides every header cell but the topic one
-    th.sortable:not(.default) {
+    // The sort dropdown (guard: Horizon hides every header cell but the
+    // topic one).
+    th.topic-showcase__sort {
       display: flex !important;
     }
 
-    th.sortable:not(.default) > button {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-1);
-      padding: var(--space-1) var(--space-3);
-      border: 1px solid var(--primary-low);
-      border-radius: var(--d-border-radius-large);
-      background: transparent;
-      color: var(--primary-high);
-      font-size: inherit;
-    }
-
-    th.sortable.sorting:not(.default) > button {
-      border-color: var(--tertiary);
-      color: var(--tertiary);
+    .topic-showcase__sort-reverse {
+      padding: var(--space-1) var(--space-2);
     }
   }
 
@@ -103,7 +93,7 @@
     // Only the bulk controls are shown: the checkbox column has no header
     // content in card lists and sorting is paused while selecting.
     th.bulk-select,
-    th.sortable:not(.default) {
+    th.topic-showcase__sort {
       display: none !important;
     }
 
@@ -125,6 +115,14 @@
     margin: 0;
     padding: 0;
     border: 0;
+  }
+
+  // Horizon has no page gutter on narrow screens (its own rows are full
+  // bleed); bordered cards need one. `--d-topic-cards` is Horizon's list class.
+  &.--d-topic-cards {
+    @include viewport.until(sm) {
+      padding-inline: var(--space-4);
+    }
   }
 
   &.topic-showcase--list > tbody.topic-list-body {
