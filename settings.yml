@@ -72,9 +72,13 @@ show_views:
 
 show_activity:
   type: bool
-  default: false
+  default: true
 
 show_publish_date:
+  type: bool
+  default: false
+
+show_sort_bar:
   type: bool
   default: true
 

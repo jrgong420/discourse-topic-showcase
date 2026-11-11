@@ -195,11 +195,15 @@ export default class ShowcaseCard extends Component {
                     class="showcase-card__meta-item --activity"
                     title={{i18n (themePrefix "showcase.activity")}}
                   >
-                    {{dIcon "clock"}}
+                    {{dIcon "clock-rotate-left"}}
                     <span class="sr-only">{{i18n
                         (themePrefix "showcase.activity")
                       }}</span>
-                    {{dFormatDate @topic.bumpedAt format="tiny" noTitle="true"}}
+                    {{dFormatDate
+                      @topic.bumpedAt
+                      format="medium"
+                      leaveAgo="true"
+                    }}
                   </li>
                 {{/if}}
                 {{#if settings.show_publish_date}}

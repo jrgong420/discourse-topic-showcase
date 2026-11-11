@@ -19,6 +19,7 @@ de:
       show_views: "Anzahl der Aufrufe auf den Karten anzeigen."
       show_activity: "Zeitpunkt der letzten Aktivität auf den Karten anzeigen."
       show_publish_date: "Veröffentlichungsdatum auf den Karten anzeigen."
+      show_sort_bar: "Sortier-Buttons (Antworten, Aufrufe, Aktivität) über Kartenlisten anzeigen."
       grid_card_min_width: "Minimale Kartenbreite in Pixeln für das Rasterlayout. Die Karten wachsen, um die Zeile zu füllen."
       thumbnail_placeholder_icon: "Symbol für Karten, deren Thema kein Bild hat. Verwende ein Symbol aus dem Standard-Symbolsatz oder ergänze es über svg_icons."
       card_border_radius: "Rundung der Kartenecken."

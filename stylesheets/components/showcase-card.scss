@@ -1,3 +1,5 @@
+@use "lib/viewport";
+
 .showcase-card {
   position: relative;
   display: flex;
@@ -21,6 +23,11 @@
 
   &.--list {
     flex-direction: row;
+
+    // Narrow screens: thumbnail on top, content below.
+    @include viewport.until(sm) {
+      flex-direction: column;
+    }
   }
 
   &.--grid {
@@ -38,6 +45,12 @@
     align-self: stretch;
     width: clamp(5.5rem, 32%, 14rem);
     min-height: 5.5rem;
+
+    @include viewport.until(sm) {
+      width: 100%;
+      min-height: 0;
+      aspect-ratio: 16 / 9;
+    }
   }
 
   &.--grid &__media {
@@ -84,6 +97,12 @@
     font-weight: 600;
     line-height: var(--line-height-medium);
     overflow-wrap: break-word;
+  }
+
+  // Unread/new bubbles follow the body text size, not the title size.
+  &__title .badge-notification {
+    font-size: var(--font-down-1);
+    vertical-align: middle;
   }
 
   &__link {
