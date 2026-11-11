@@ -21,4 +21,5 @@
       $card_border_radius
     )};
   --tc-TopicShowcase-card-space-gap: var(--space-4);
+  --tc-TopicShowcase-carousel-size-slides-per-view: #{$carousel_slides_per_view};
 }

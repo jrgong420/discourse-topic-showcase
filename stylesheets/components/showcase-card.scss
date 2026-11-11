@@ -66,6 +66,22 @@
     object-fit: cover;
   }
 
+  // Start date of a calendar event, over the thumbnail.
+  &__event-date {
+    position: absolute;
+    inset-block-start: var(--space-2);
+    inset-inline-start: var(--space-2);
+    z-index: 1;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--d-border-radius);
+    background: var(--secondary);
+    box-shadow: var(--shadow-card);
+    color: var(--primary);
+    font-size: var(--font-down-1);
+    font-weight: 600;
+    line-height: var(--line-height-medium);
+  }
+
   &__placeholder {
     position: absolute;
     inset: 0;

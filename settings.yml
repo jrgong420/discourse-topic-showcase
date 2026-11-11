@@ -100,3 +100,52 @@ card_border_radius:
     - small
     - medium
     - large
+
+carousel_enabled:
+  type: bool
+  default: false
+
+carousel_title:
+  type: string
+  default: ""
+
+carousel_filter_tags:
+  type: list
+  list_type: tag
+  default: ""
+
+carousel_max_items:
+  type: integer
+  default: 8
+  min: 1
+  max: 20
+
+carousel_order:
+  type: enum
+  default: latest
+  choices:
+    - latest
+    - created
+    - random
+
+carousel_display_expired_events:
+  type: bool
+  default: false
+
+carousel_display_upcoming_events:
+  type: bool
+  default: true
+
+carousel_slides_per_view:
+  type: integer
+  default: 3
+  min: 1
+  max: 6
+
+carousel_loop:
+  type: bool
+  default: true
+
+carousel_collapsible:
+  type: bool
+  default: true

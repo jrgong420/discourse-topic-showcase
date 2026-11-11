@@ -1,0 +1,117 @@
+@use "lib/viewport";
+
+// Featured topics carousel: a header bar (title, "new" badge, buttons) above a
+// row of showcase cards that Embla scrolls.
+.showcase-carousel {
+  // Cards visible at once. Narrow screens show one card and a peek of the
+  // next one; the setting only applies where there is room for it.
+  --tc-TopicShowcase-carousel-size-slide: calc(
+    100% / var(--tc-TopicShowcase-carousel-size-slides-per-view)
+  );
+  margin-block: 0 var(--space-4);
+
+  @include viewport.until(sm) {
+    --tc-TopicShowcase-carousel-size-slide: 85%;
+  }
+
+  @include viewport.between(sm, lg) {
+    --tc-TopicShowcase-carousel-size-slide: calc(
+      100% / min(var(--tc-TopicShowcase-carousel-size-slides-per-view), 2)
+    );
+  }
+
+  // Horizon has no page gutter on narrow screens (its own topic rows are full
+  // bleed); bordered cards need one. `--d-topic-cards` is Horizon's list class,
+  // as in app/topic-list.
+  #list-area:has(.--d-topic-cards) & {
+    @include viewport.until(sm) {
+      margin-inline: var(--space-4);
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--primary-low);
+    border-radius: var(--tc-TopicShowcase-card-border-radius);
+    background: var(--d-content-background);
+  }
+
+  &__title {
+    min-width: 0;
+    margin: 0;
+    color: var(--primary);
+    font-size: var(--font-up-1);
+    font-weight: 600;
+    line-height: var(--line-height-medium);
+    overflow-wrap: break-word;
+  }
+
+  // Same pairing core uses for its notification badges.
+  &__badge {
+    flex: none;
+    padding: 0 var(--space-2);
+    border-radius: var(--d-border-radius-large);
+    background: var(--tertiary);
+    color: var(--secondary);
+    font-size: var(--font-down-1);
+    font-weight: 600;
+    line-height: var(--line-height-large);
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-1);
+    margin-inline-start: auto;
+  }
+
+  // The scroll direction flips with the reading direction.
+  .rtl &__prev .d-icon,
+  .rtl &__next .d-icon {
+    transform: scaleX(-1);
+  }
+
+  &__body {
+    margin-block-start: var(--space-3);
+  }
+
+  &.is-collapsed &__body {
+    display: none;
+  }
+
+  // The padding leaves room for the card shadow and focus outline, which the
+  // clipping viewport would cut off; the negative margin keeps the cards
+  // aligned with the header bar.
+  &__viewport {
+    margin: calc(var(--space-1) * -1);
+    padding: var(--space-1);
+    overflow: hidden;
+  }
+
+  // Embla's recommended layout: the track is pulled back by one gap, every
+  // slide brings its own gap on the leading side.
+  &__track {
+    display: flex;
+    margin-inline-start: calc(var(--tc-TopicShowcase-card-space-gap) * -1);
+
+    // Vertical scrolling stays with the page while swiping horizontally.
+    touch-action: pan-y pinch-zoom;
+  }
+
+  &__slide {
+    // The slide size includes the gap padding.
+    box-sizing: border-box;
+    flex: 0 0 var(--tc-TopicShowcase-carousel-size-slide);
+    min-width: 0;
+    padding-inline-start: var(--tc-TopicShowcase-card-space-gap);
+  }
+
+  &__slide > .showcase-card {
+    height: 100%;
+  }
+}

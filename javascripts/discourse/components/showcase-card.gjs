@@ -4,6 +4,7 @@ import TopicLink from "discourse/components/topic-list/topic-link";
 import UnreadIndicator from "discourse/components/topic-list/unread-indicator";
 import TopicPostBadges from "discourse/components/topic-post-badges";
 import TopicStatus from "discourse/components/topic-status";
+import { shortDate, smartShortDate } from "discourse/lib/formatter";
 import { eq, gt, or } from "discourse/truth-helpers";
 import DUserLink from "discourse/ui-kit/d-user-link";
 import dAvatar from "discourse/ui-kit/helpers/d-avatar";
@@ -27,6 +28,8 @@ const GRID_THUMBNAIL_WIDTH_FACTOR = 1.5;
  *
  * @param {Topic} @topic
  * @param {"list"|"grid"} @layout
+ * @param {boolean} [@eventDate] Show the start date of the topic's calendar
+ *   event (`event_starts_at`) as a badge over the thumbnail.
  */
 export default class ShowcaseCard extends Component {
   get layout() {
@@ -66,6 +69,22 @@ export default class ShowcaseCard extends Component {
     return settings.show_author && this.args.topic.creator;
   }
 
+  // Short localised date of the event start, with the year only when it is not
+  // this year ("20 Jun", "Jun 20, 2025").
+  get eventDate() {
+    const start = this.args.topic.event_starts_at;
+    if (!this.args.eventDate || !start) {
+      return null;
+    }
+
+    const date = new Date(start);
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    return { iso: date.toISOString(), label: smartShortDate(date, shortDate) };
+  }
+
   get showExcerpt() {
     return settings.show_excerpt && this.args.topic.hasExcerpt;
   }
@@ -96,6 +115,15 @@ export default class ShowcaseCard extends Component {
           <span aria-hidden="true" class="showcase-card__placeholder">
             {{dIcon settings.thumbnail_placeholder_icon}}
           </span>
+        {{/if}}
+
+        {{#if this.eventDate}}
+          <time
+            class="showcase-card__event-date"
+            datetime={{this.eventDate.iso}}
+          >
+            {{this.eventDate.label}}
+          </time>
         {{/if}}
       </div>
 

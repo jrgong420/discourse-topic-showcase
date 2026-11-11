@@ -2,6 +2,7 @@ import { settings } from "virtual:theme";
 import HeaderTopicCell from "discourse/components/topic-list/header/topic-cell";
 import { apiInitializer } from "discourse/lib/api";
 import ShowcaseCard from "../components/showcase-card.gjs";
+import ShowcaseCarouselOutlet from "../components/showcase-carousel-outlet.gjs";
 import ShowcaseSort from "../components/showcase-sort.gjs";
 import {
   layoutForCategory,
@@ -51,6 +52,12 @@ export default apiInitializer((api) => {
   api.registerValueTransformer("bulk-select-in-nav-controls", ({ value }) =>
     layoutForCurrentRoute(router, site) ? true : value
   );
+
+  // Featured topics carousel above the homepage topic list. The outlet is
+  // rendered on every discovery list; the component only shows on the homepage.
+  if (settings.carousel_enabled && settings.carousel_filter_tags) {
+    api.renderInOutlet("discovery-list-container-top", ShowcaseCarouselOutlet);
+  }
 
   if (settings.show_sort_dropdown) {
     api.renderInOutlet("bread-crumbs-right", ShowcaseSort);

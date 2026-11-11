@@ -23,6 +23,16 @@ de:
       grid_card_min_width: "Minimale Kartenbreite in Pixeln für das Rasterlayout. Die Karten wachsen, um die Zeile zu füllen."
       thumbnail_placeholder_icon: "Symbol für Karten, deren Thema kein Bild hat. Verwende ein Symbol aus dem Standard-Symbolsatz oder ergänze es über svg_icons."
       card_border_radius: "Rundung der Kartenecken."
+      carousel_enabled: "Zeigt auf der Startseite des Forums über der Themenliste ein Karussell mit empfohlenen Themen. Benötigt mindestens einen Tag in carousel_filter_tags."
+      carousel_title: "Titel des Karussells. Leer lassen, um den Standardtitel (\"Empfohlen\") zu verwenden."
+      carousel_filter_tags: "Themen müssen alle diese Tags tragen, um im Karussell zu erscheinen. Ohne Tags wird das Karussell nicht angezeigt."
+      carousel_max_items: "Maximale Anzahl der Themen im Karussell."
+      carousel_order: "Reihenfolge der Themen im Karussell. latest = zuletzt aktive zuerst, created = neuestes Thema zuerst, random = bei jedem Seitenaufruf zufällig gemischt."
+      carousel_display_expired_events: "Themen anzeigen, deren Kalendertermin vorbei ist (benötigt das Discourse-Calendar-Plugin). Themen ohne Termin werden nie ausgeblendet."
+      carousel_display_upcoming_events: "Themen anzeigen, deren Kalendertermin noch nicht begonnen hat (benötigt das Discourse-Calendar-Plugin). Themen ohne Termin werden nie ausgeblendet."
+      carousel_slides_per_view: "Anzahl der gleichzeitig sichtbaren Karten auf großen Bildschirmen. Schmale Bildschirme zeigen immer eine Karte, von der nächsten ist ein Teil sichtbar."
+      carousel_loop: "Von der letzten Karte wieder zur ersten springen und umgekehrt."
+      carousel_collapsible: "Besucher können das Karussell einklappen. Die Wahl wird pro Browser gespeichert, und ein eingeklapptes Karussell zeigt an, wie viele Themen seit dem letzten Öffnen neu sind."
   showcase:
     sort:
       label: "Sortieren nach"
@@ -33,3 +43,13 @@ de:
     views: "Aufrufe"
     activity: "Letzte Aktivität"
     published: "Veröffentlicht"
+    carousel:
+      default_title: "Empfohlen"
+      collapse: "%{title} einklappen"
+      expand: "%{title} ausklappen"
+      previous: "Zurück"
+      next: "Weiter"
+      slide_label: "%{current} von %{total}"
+      new_count:
+        one: "%{count} neu"
+        other: "%{count} neu"
