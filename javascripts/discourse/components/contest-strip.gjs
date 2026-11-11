@@ -18,14 +18,20 @@ const StripContent = <template>
   {{#if @thumbnails.length}}
     <span aria-hidden="true" class="contest-strip__thumbnails">
       {{#each @thumbnails key="topic.id" as |thumbnail|}}
-        <img
-          alt=""
-          class="contest-strip__thumbnail"
-          height="32"
-          loading="lazy"
-          src={{thumbnail.url}}
-          width="32"
-        />
+        {{#if thumbnail.url}}
+          <img
+            alt=""
+            class="contest-strip__thumbnail"
+            height="32"
+            loading="lazy"
+            src={{thumbnail.url}}
+            width="32"
+          />
+        {{else}}
+          <span class="contest-strip__thumbnail --placeholder">
+            {{dIcon settings.thumbnail_placeholder_icon}}
+          </span>
+        {{/if}}
       {{/each}}
     </span>
   {{/if}}
@@ -64,22 +70,12 @@ export default class ContestStrip extends Component {
       : i18n(themePrefix("contest.entries"), { count: entries.length });
   }
 
-  // Entries that have an image, in list order.
+  // The first entries in list order. An entry without an image gets the same
+  // placeholder as its card, so the strip matches the list below it.
   get thumbnails() {
-    const result = [];
-
-    for (const topic of this.args.context.entries) {
-      if (result.length >= settings.contest_strip_thumbnails) {
-        break;
-      }
-
-      const url = smallestThumbnailUrl(topic);
-      if (url) {
-        result.push({ topic, url });
-      }
-    }
-
-    return result;
+    return this.args.context.entries
+      .slice(0, settings.contest_strip_thumbnails)
+      .map((topic) => ({ topic, url: smallestThumbnailUrl(topic) }));
   }
 
   // The list is part of the first post, so it is only in the DOM when the

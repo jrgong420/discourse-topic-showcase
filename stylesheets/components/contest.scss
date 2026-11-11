@@ -72,6 +72,15 @@
     border-radius: var(--d-border-radius);
     background: var(--primary-low);
     object-fit: cover;
+
+    // Entry without an image: the card placeholder icon, at strip size.
+    &.--placeholder {
+      display: grid;
+      place-items: center;
+      background: var(--primary-very-low);
+      color: var(--primary-low-mid);
+      font-size: var(--font-down-1);
+    }
   }
 
   &__action {

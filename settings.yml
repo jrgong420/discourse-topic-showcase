@@ -90,7 +90,7 @@ grid_card_min_width:
 
 thumbnail_ratio:
   type: enum
-  default: "4:3"
+  default: "16:9"
   choices:
     - "16:9"
     - "3:2"
