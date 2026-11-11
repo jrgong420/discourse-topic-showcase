@@ -1,0 +1,12 @@
+{
+  "name": "Topic Showcase",
+  "component": true,
+  "authors": "jrgong420",
+  "about_url": "https://github.com/jrgong420/discourse-topic-showcase",
+  "license_url": "https://github.com/jrgong420/discourse-topic-showcase/blob/main/LICENSE",
+  "theme_version": "0.0.1",
+  "minimum_discourse_version": null,
+  "maximum_discourse_version": null,
+  "assets": {},
+  "modifiers": {}
+}
