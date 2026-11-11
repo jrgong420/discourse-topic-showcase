@@ -2,6 +2,7 @@ import { module, test } from "qunit";
 import {
   countNewSince,
   filterAndOrderTopics,
+  hasAllTags,
 } from "../../../../javascripts/discourse/lib/carousel-topics.js";
 
 const NOW = Date.parse("2026-06-15T12:00:00Z");
@@ -229,5 +230,22 @@ module("Unit | Lib | carousel-topics | countNewSince", function () {
       ),
       1
     );
+  });
+});
+
+module("Unit | Topic Showcase | hasAllTags", function () {
+  test("matches tags given as objects or names, ignoring case", function (assert) {
+    const tagged = { tags: [{ name: "Featured" }, "contest-2026"] };
+    assert.true(hasAllTags(tagged, ["featured", "contest-2026"]));
+  });
+
+  test("a topic missing one of the tags does not match", function (assert) {
+    assert.false(
+      hasAllTags({ tags: [{ name: "featured" }] }, ["featured", "x"])
+    );
+  });
+
+  test("a topic without tags does not match", function (assert) {
+    assert.false(hasAllTags({}, ["featured"]));
   });
 });

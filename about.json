@@ -11,10 +11,10 @@
     "embla_carousel": "assets/embla-carousel.umd.js"
   },
   "modifiers": {
-    "serialize_topic_excerpts": {
-      "type": "setting",
-      "value": "show_excerpt"
-    },
-    "topic_thumbnail_sizes": ["400x300", "800x600"]
+    "serialize_topic_excerpts": true,
+    "topic_thumbnail_sizes": [
+      "400x300",
+      "800x600"
+    ]
   }
 }

@@ -19,7 +19,11 @@ import {
   writeCollapsed,
   writeSeenAt,
 } from "../lib/carousel-storage.js";
-import { countNewSince, filterAndOrderTopics } from "../lib/carousel-topics.js";
+import {
+  countNewSince,
+  filterAndOrderTopics,
+  hasAllTags,
+} from "../lib/carousel-topics.js";
 import { loadEmbla } from "../lib/embla.js";
 import ShowcaseCard from "./showcase-card.gjs";
 
@@ -32,6 +36,9 @@ const CHIP_THUMBNAILS = 3;
 
 // Ids for the ARIA references between header and body.
 let nextId = 0;
+
+// Tag names core's `tag:` topic filter can match (lib/topics_filter.rb).
+const FILTERABLE_TAG = /^[\p{N}\p{L}\-_.]+$/u;
 
 function filterTags() {
   return String(settings.carousel_filter_tags ?? "")
@@ -245,6 +252,17 @@ export default class ShowcaseCarousel extends Component {
   async load() {
     const tags = filterTags();
 
+    // Core's topic filter ignores a tag clause it cannot parse and then
+    // returns unfiltered topics. Such tag names are not supported here: show
+    // nothing rather than unrelated topics.
+    if (!tags.every((tag) => FILTERABLE_TAG.test(tag))) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "[topic-showcase] carousel_filter_tags contains a tag the topic filter cannot match; carousel not shown."
+      );
+      return;
+    }
+
     try {
       const order = FILTER_ORDERS[settings.carousel_order] ?? "activity";
       // `tag:a+b` matches topics carrying all the tags.
@@ -258,7 +276,11 @@ export default class ShowcaseCarousel extends Component {
 
       // Same conversion core's topic lists use, so cards get real Topic
       // models (category, creator, thumbnails, lastUnreadUrl).
-      const topics = TopicList.topicsFrom(this.store, json) ?? [];
+      // Keep only topics that really carry every tag, whatever the server
+      // made of the query.
+      const topics = (TopicList.topicsFrom(this.store, json) ?? []).filter(
+        (topic) => hasAllTags(topic, tags)
+      );
 
       const items = filterAndOrderTopics(topics, {
         order: settings.carousel_order,

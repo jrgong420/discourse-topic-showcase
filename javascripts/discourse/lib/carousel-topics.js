@@ -134,3 +134,15 @@ export function countNewSince(topics, seenAt) {
     return latest > seenTime;
   }).length;
 }
+
+/**
+ * Whether a topic carries every one of the given tag names. Topic tags are
+ * serialised as objects with a name, or as plain names on older data.
+ */
+export function hasAllTags(topic, tagNames) {
+  const names = (topic.tags ?? []).map((tag) =>
+    String(tag?.name ?? tag).toLowerCase()
+  );
+
+  return tagNames.every((name) => names.includes(String(name).toLowerCase()));
+}
