@@ -60,6 +60,11 @@ export default class ShowcaseCard extends Component {
     );
   }
 
+  // list_card_height gives list cards one fixed height (from sm up).
+  get hasFixedHeight() {
+    return this.layout === "list" && settings.list_card_height > 0;
+  }
+
   get isCarousel() {
     return this.args.context === "carousel";
   }
@@ -156,6 +161,7 @@ export default class ShowcaseCard extends Component {
         (if this.thumbnail "--has-thumbnail" "--no-thumbnail")
         (if @topic.visited "--visited")
         (if this.isCarousel "--carousel")
+        (if this.hasFixedHeight "--fixed-height")
       }}
       data-topic-id={{@topic.id}}
       ...attributes

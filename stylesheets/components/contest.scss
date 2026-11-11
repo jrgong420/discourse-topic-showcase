@@ -80,6 +80,28 @@
     margin-inline-start: auto;
     font-weight: 600;
   }
+
+  // The disclosure button (entries opened from the strip) looks like the link
+  // that scrolls to the list after the first post.
+  button.contest-strip__link {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--tertiary);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+
+    .discourse-no-touch &:hover {
+      color: var(--tertiary-hover);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--tertiary);
+      outline-offset: 2px;
+    }
+  }
 }
 
 // Contest entry: a small line that leads back to the announcement.
@@ -103,7 +125,8 @@
   }
 }
 
-// Contest announcement: the full list of entries after the first post.
+// Contest announcement: the full list of entries, after the first post or
+// opened in place below the strip.
 .contest-entries {
   @extend %post-column;
   margin: var(--space-5) 0 var(--space-4);
@@ -121,16 +144,31 @@
     }
   }
 
+  // Opened from the strip: it follows the strip directly, and fades in
+  // like the carousel does when it expands (not for users who ask for less
+  // motion).
+  &.--below-strip {
+    margin-block-start: 0;
+
+    @media (prefers-reduced-motion: no-preference) {
+      animation: contest-entries-reveal 0.22s ease-out both;
+    }
+  }
+
   &__grid {
     display: grid;
-    grid-template-columns: repeat(
-      auto-fill,
-      minmax(min(100%, var(--tc-TopicShowcase-card-size-min-width)), 1fr)
-    );
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--tc-TopicShowcase-card-space-gap);
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  &.--grid &__grid {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(100%, var(--tc-TopicShowcase-card-size-min-width)), 1fr)
+    );
   }
 
   &__item {
@@ -143,5 +181,17 @@
     display: inline-block;
     margin-block-start: var(--space-4);
     font-weight: 600;
+  }
+}
+
+@keyframes contest-entries-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--space-2) * -1));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }

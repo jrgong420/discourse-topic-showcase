@@ -278,6 +278,12 @@
     height: 100%;
   }
 
+  // The carousel's own thumbnail shape, whatever grid_thumbnail_ratio says
+  // for the topic lists.
+  &__slide > .showcase-card.--grid .showcase-card__media {
+    aspect-ratio: 16 / 10;
+  }
+
   // One pill per scroll snap: the active one is wider and highlighted. The
   // button is larger than the pill, so it is easy to hit.
   &__pills {

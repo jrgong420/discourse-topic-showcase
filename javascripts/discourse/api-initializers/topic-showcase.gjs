@@ -61,15 +61,20 @@ export default apiInitializer((api) => {
     api.renderInOutlet("discovery-list-container-top", ShowcaseCarouselOutlet);
   }
 
-  // Contests: a strip under the title of the announcement topic, the full list
-  // of entries after its first post and a link back to the announcement on
-  // every entry. Both outlets render on every topic; the components decide
-  // whether the topic is part of a contest. `topic-above-posts` sits under the
-  // topic title and, unlike `topic-above-post-stream`, is also rendered when
-  // the topic is opened deep in the stream (without its first post).
+  // Contests: a strip under the title of the announcement topic, the list of
+  // entries (after the first post, or opened from the strip) and a link back to
+  // the announcement on every entry. The outlets render on every topic; the
+  // components decide whether the topic is part of a contest.
+  // `topic-above-posts` sits under the topic title and, unlike
+  // `topic-above-post-stream`, is also rendered when the topic is opened deep
+  // in the stream (without its first post).
   if (settings.contest_enabled && settings.contest_tag_group) {
     api.renderInOutlet("topic-above-posts", ContestTopicOutlet);
-    api.renderAfterWrapperOutlet("post-article", ContestEntriesOutlet);
+
+    // At the top, the strip itself opens the list; no outlet after the post.
+    if (settings.contest_entries_position === "after_first_post") {
+      api.renderAfterWrapperOutlet("post-article", ContestEntriesOutlet);
+    }
   }
 
   if (settings.show_sort_dropdown) {

@@ -1,20 +1,32 @@
 import Component from "@glimmer/component";
+import { tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { settings, themePrefix } from "virtual:theme";
 import dIcon from "discourse/ui-kit/helpers/d-icon";
 import { i18n } from "discourse-i18n";
 import { smallestThumbnailUrl } from "../lib/thumbnail.js";
-import { ENTRIES_ID } from "./contest-entries.gjs";
+import ContestEntries, { ENTRIES_ID } from "./contest-entries.gjs";
 
 /**
  * The compact row under the title of a contest announcement: entry count,
- * thumbnails of some entries and a control that leads to the full list.
+ * thumbnails of some entries and a control for the full list of entries.
+ *
+ * With contest_entries_position "after_first_post" the list is rendered after
+ * the first post and the control leads there. Otherwise the control is a
+ * disclosure button that opens the list right below the strip; it starts
+ * closed on every visit of a topic, as the strip is created per topic view.
  *
  * @param {Object} @context The contest context of an announcement.
  * @param {Topic} @topic The announcement.
  */
 export default class ContestStrip extends Component {
+  @tracked expanded = false;
+
+  get isDisclosure() {
+    return settings.contest_entries_position !== "after_first_post";
+  }
+
   get countLabel() {
     const { entries, hasMore } = this.args.context;
 
@@ -46,6 +58,11 @@ export default class ContestStrip extends Component {
   // of the topic, with the anchor of the list, which core scrolls to.
   get href() {
     return `${this.args.topic.urlForPostNumber(1)}#${ENTRIES_ID}`;
+  }
+
+  @action
+  toggle() {
+    this.expanded = !this.expanded;
   }
 
   @action
@@ -103,14 +120,38 @@ export default class ContestStrip extends Component {
         </ul>
       {{/if}}
 
-      <a
-        class="contest-strip__link"
-        href={{this.href}}
-        {{on "click" this.showEntries}}
-      >
-        {{i18n (themePrefix "contest.show_entries")}}
-        {{dIcon "arrow-down" class="contest-strip__link-icon"}}
-      </a>
+      {{#if this.isDisclosure}}
+        <button
+          aria-controls={{ENTRIES_ID}}
+          aria-expanded={{if this.expanded "true" "false"}}
+          class="contest-strip__link"
+          type="button"
+          {{on "click" this.toggle}}
+        >
+          {{if
+            this.expanded
+            (i18n (themePrefix "contest.hide_entries"))
+            (i18n (themePrefix "contest.show_entries"))
+          }}
+          {{dIcon
+            (if this.expanded "chevron-up" "chevron-down")
+            class="contest-strip__link-icon"
+          }}
+        </button>
+      {{else}}
+        <a
+          class="contest-strip__link"
+          href={{this.href}}
+          {{on "click" this.showEntries}}
+        >
+          {{i18n (themePrefix "contest.show_entries")}}
+          {{dIcon "arrow-down" class="contest-strip__link-icon"}}
+        </a>
+      {{/if}}
     </section>
+
+    {{#if this.expanded}}
+      <ContestEntries @belowStrip={{true}} @context={{@context}} />
+    {{/if}}
   </template>
 }

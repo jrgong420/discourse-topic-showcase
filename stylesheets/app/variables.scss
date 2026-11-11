@@ -15,11 +15,39 @@
   @return var(--d-border-radius);
 }
 
+// "16:9" -> "16 / 9", the form `aspect-ratio` takes.
+@function aspect-ratio($choice) {
+  $colon: string.index($choice, ":");
+
+  @return string.unquote(
+    string.slice($choice, 1, $colon - 1) + " / " +
+      string.slice($choice, $colon + 1)
+  );
+}
+
+// 0 means automatic: the value the styles always had. (The setting arrives
+// as text, so it is compared as text.)
+@function px-or($value, $automatic) {
+  @if "#{$value}" == "0" {
+    @return $automatic;
+  }
+
+  @return #{$value}px;
+}
+
 :root {
   --tc-TopicShowcase-card-size-min-width: #{$grid_card_min_width}px;
   --tc-TopicShowcase-card-border-radius: #{card-border-radius(
       $card_border_radius
     )};
-  --tc-TopicShowcase-card-space-gap: var(--space-4);
+  --tc-TopicShowcase-card-space-gap: #{$card_gap}px;
+  --tc-TopicShowcase-card-size-list-height: #{px-or($list_card_height, 100%)};
+  --tc-TopicShowcase-card-size-list-thumbnail-width: #{px-or(
+      $list_thumbnail_width,
+      clamp(5.5rem, 32%, 14rem)
+    )};
+  --tc-TopicShowcase-card-ratio-grid-thumbnail: #{aspect-ratio(
+      $grid_thumbnail_ratio
+    )};
   --tc-TopicShowcase-carousel-size-slides-per-view: #{$carousel_slides_per_view};
 }

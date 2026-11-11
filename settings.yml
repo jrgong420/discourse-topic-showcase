@@ -88,6 +88,33 @@ grid_card_min_width:
   min: 160
   max: 600
 
+grid_thumbnail_ratio:
+  type: enum
+  default: "4:3"
+  choices:
+    - "16:9"
+    - "3:2"
+    - "4:3"
+    - "1:1"
+
+list_card_height:
+  type: integer
+  default: 0
+  min: 0
+  max: 600
+
+list_thumbnail_width:
+  type: integer
+  default: 0
+  min: 0
+  max: 480
+
+card_gap:
+  type: integer
+  default: 16
+  min: 0
+  max: 48
+
 thumbnail_placeholder_icon:
   type: string
   default: "image"
@@ -208,3 +235,17 @@ contest_strip_thumbnails:
   default: 5
   min: 0
   max: 8
+
+contest_entries_layout:
+  type: enum
+  default: list
+  choices:
+    - grid
+    - list
+
+contest_entries_position:
+  type: enum
+  default: top
+  choices:
+    - top
+    - after_first_post
