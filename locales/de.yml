@@ -66,6 +66,9 @@ de:
       homepage_docs_category: "Abschnitt Dokumentation: die Unterkategorien dieser Kategorie als Inhaltsverzeichnis mit Themenanzahl und Link zur Kategorie. Leer = ausgeblendet."
       homepage_docs_count: "Anzahl Unterkategorien im Abschnitt Dokumentation. 0 blendet ihn aus."
       homepage_docs_descriptions: "Zeigt im Abschnitt Dokumentation die Beschreibung jeder Unterkategorie unter ihrem Namen."
+      homepage_questions_category: "Abschnitt Offene Fragen (Seitenspalte): die neuesten Themen dieser Kategorie (bei mehreren die erste). Leer = ausgeblendet."
+      homepage_questions_count: "Anzahl Themen im Abschnitt Offene Fragen. 0 blendet ihn aus."
+      homepage_questions_unsolved: "Nur Themen ohne akzeptierte Lösung zeigen (braucht das Solved-Plugin mit aktivierten Lösungen in dieser Kategorie)."
   showcase:
     sort:
       label: "Sortieren nach"
@@ -118,3 +121,5 @@ de:
       title: "Angebote"
     docs:
       title: "Dokumentation"
+    questions:
+      title: "Offene Fragen"

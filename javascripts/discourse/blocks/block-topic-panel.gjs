@@ -48,6 +48,7 @@ const SKELETON_ROWS = { rows: "topic", cards: "card", tiles: "tile" };
       enum: ["activity", "created"],
       default: "activity",
     },
+    status: { type: "string" },
     count: { type: "number", default: 5, min: 1, max: 30, integer: true },
     display: {
       type: "string",
@@ -84,6 +85,7 @@ export default class BlockTopicPanel extends Component {
         tags,
         categorySlug: filterSlug(this.category),
         order: this.args.order,
+        status: this.args.status,
       });
       return query ? { query, tags } : null;
     }

@@ -5,8 +5,8 @@
   container-type: inline-size;
   container-name: homepage-blocks;
 
-  // Narrow: one column in reading order. The two groups dissolve so their
-  // panels can be ordered across them; the latest topics come last.
+  // Narrow: one column, main column first, then the side column. The groups
+  // dissolve so the panels can be ordered explicitly.
   &__layout {
     display: flex;
     flex-direction: column;
@@ -26,24 +26,28 @@
     order: 1;
   }
 
-  &__block--gallery {
+  &__block--docs {
     order: 2;
   }
 
-  &__block--partners {
+  &__block--latest {
     order: 3;
   }
 
-  &__block--deals {
+  &__block--gallery {
     order: 4;
   }
 
-  &__block--docs {
+  &__block--partners {
     order: 5;
   }
 
-  &__block--latest {
+  &__block--questions {
     order: 6;
+  }
+
+  &__block--deals {
+    order: 7;
   }
 
   // Core keeps a wrapper per block even when it renders nothing.

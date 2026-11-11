@@ -327,3 +327,18 @@ homepage_docs_count:
 homepage_docs_descriptions:
   type: bool
   default: false
+
+homepage_questions_category:
+  type: list
+  list_type: category
+  default: ""
+
+homepage_questions_count:
+  type: integer
+  default: 5
+  min: 0
+  max: 10
+
+homepage_questions_unsolved:
+  type: bool
+  default: true

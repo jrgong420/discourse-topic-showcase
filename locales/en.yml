@@ -63,9 +63,12 @@ en:
       homepage_partners_count: "Number of tiles in the partners section. 0 hides it."
       homepage_deals_tags: "Deals section: topics carrying all of these tags, newest first. Leave empty to hide the section; it also hides itself while there are no such topics."
       homepage_deals_count: "Number of topics in the deals section. 0 hides it."
-      homepage_docs_category: "Documentation section: this category's subcategories as a table of contents, with topic counts and a link to the category. Leave empty to hide the section."
+      homepage_docs_category: "Documentation section (main column): this category's subcategories as a table of contents, with topic counts and a link to the category. Leave empty to hide the section."
       homepage_docs_count: "Number of subcategories listed in the documentation section. 0 hides it."
       homepage_docs_descriptions: "Show each subcategory's description under its name in the documentation section."
+      homepage_questions_category: "Open questions section (side column): the newest topics of this category (first one if several). Leave empty to hide the section."
+      homepage_questions_count: "Number of topics in the open questions section. 0 hides it."
+      homepage_questions_unsolved: "Only list topics without an accepted solution (needs the Solved plugin with solutions enabled in that category)."
   showcase:
     sort:
       label: "Sort by"
@@ -118,3 +121,5 @@ en:
       title: "Deals"
     docs:
       title: "Documentation"
+    questions:
+      title: "Open questions"

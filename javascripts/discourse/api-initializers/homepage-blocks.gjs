@@ -19,9 +19,9 @@ const firstCategoryId = (value) =>
 // section without its tag/category, or with a count of 0, is left out, and a
 // section that finds no topics renders nothing.
 //
-// Wide screens: carousel across the top, then a main column (releases,
-// showcase cards, latest) and a side column (partners, deals, docs). Narrow
-// screens stack them in reading order (see stylesheets/layouts/homepage.scss).
+// Wide screens: carousel across the top, then a main column (releases, docs,
+// latest, showcase cards) and a side column (partners, open questions,
+// deals). Narrow screens stack them in the same order.
 export default apiInitializer((api) => {
   // An outlet takes one layout for the whole site; leave it to other themes
   // unless the homepage is switched on.
@@ -43,13 +43,16 @@ export default apiInitializer((api) => {
   );
 
   const releasesTags = parseTagList(settings.homepage_releases_tags);
+  const docsCategoryId = firstCategoryId(settings.homepage_docs_category);
   const galleryCategoryId = firstCategoryId(settings.homepage_gallery_category);
   const partnersTags = parseTagList(settings.homepage_partners_tags);
   const partnersCategoryId = firstCategoryId(
     settings.homepage_partners_category
   );
+  const questionsCategoryId = firstCategoryId(
+    settings.homepage_questions_category
+  );
   const dealsTags = parseTagList(settings.homepage_deals_tags);
-  const docsCategoryId = firstCategoryId(settings.homepage_docs_category);
 
   const main = [
     releasesTags.length &&
@@ -65,17 +68,16 @@ export default apiInitializer((api) => {
           display: "rows",
         },
       },
-    galleryCategoryId &&
-      settings.homepage_gallery_count > 0 && {
-        block: BlockTopicPanel,
-        id: "gallery",
+    docsCategoryId &&
+      settings.homepage_docs_count > 0 && {
+        block: BlockCategoryPanel,
+        id: "docs",
         args: {
-          title: "homepage.gallery.title",
-          icon: "screwdriver-wrench",
-          categoryId: galleryCategoryId,
-          order: "created",
-          count: settings.homepage_gallery_count,
-          display: "cards",
+          title: "homepage.docs.title",
+          icon: "book",
+          categoryId: docsCategoryId,
+          count: settings.homepage_docs_count,
+          showDescriptions: settings.homepage_docs_descriptions,
         },
       },
     settings.homepage_latest_count > 0 && {
@@ -90,6 +92,19 @@ export default apiInitializer((api) => {
         showAvatars: true,
       },
     },
+    galleryCategoryId &&
+      settings.homepage_gallery_count > 0 && {
+        block: BlockTopicPanel,
+        id: "gallery",
+        args: {
+          title: "homepage.gallery.title",
+          icon: "screwdriver-wrench",
+          categoryId: galleryCategoryId,
+          order: "created",
+          count: settings.homepage_gallery_count,
+          display: "cards",
+        },
+      },
   ].filter(Boolean);
 
   const side = [
@@ -106,6 +121,20 @@ export default apiInitializer((api) => {
           display: "tiles",
         },
       },
+    questionsCategoryId &&
+      settings.homepage_questions_count > 0 && {
+        block: BlockTopicPanel,
+        id: "questions",
+        args: {
+          title: "homepage.questions.title",
+          icon: "circle-question",
+          categoryId: questionsCategoryId,
+          status: settings.homepage_questions_unsolved ? "unsolved" : undefined,
+          order: "created",
+          count: settings.homepage_questions_count,
+          display: "rows",
+        },
+      },
     dealsTags.length &&
       settings.homepage_deals_count > 0 && {
         block: BlockTopicPanel,
@@ -117,18 +146,6 @@ export default apiInitializer((api) => {
           order: "created",
           count: settings.homepage_deals_count,
           display: "rows",
-        },
-      },
-    docsCategoryId &&
-      settings.homepage_docs_count > 0 && {
-        block: BlockCategoryPanel,
-        id: "docs",
-        args: {
-          title: "homepage.docs.title",
-          icon: "book",
-          categoryId: docsCategoryId,
-          count: settings.homepage_docs_count,
-          showDescriptions: settings.homepage_docs_descriptions,
         },
       },
   ].filter(Boolean);

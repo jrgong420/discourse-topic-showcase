@@ -18,9 +18,11 @@ const FILTER_ORDERS = { activity: "activity", created: "created" };
  * @param {string} [options.categorySlug] Topics in this category and its
  *   subcategories. A subcategory is given as "parent-slug:child-slug".
  * @param {"activity"|"created"} [options.order]
+ * @param {string} [options.status] A topic filter status such as "unsolved"
+ *   (needs the plugin that provides it, e.g. Solved).
  * @returns {string|null}
  */
-export function homepageQuery({ tags = [], categorySlug, order }) {
+export function homepageQuery({ tags = [], categorySlug, order, status }) {
   if (!tags.length && !categorySlug) {
     return null;
   }
@@ -35,6 +37,9 @@ export function homepageQuery({ tags = [], categorySlug, order }) {
   }
   if (tags.length) {
     parts.push(`tag:${tags.join("+")}`);
+  }
+  if (status && /^[a-z_]+$/.test(status)) {
+    parts.push(`status:${status}`);
   }
   parts.push(`order:${FILTER_ORDERS[order] ?? "activity"}`);
 
