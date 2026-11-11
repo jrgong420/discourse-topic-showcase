@@ -124,8 +124,15 @@
     box-shadow: none !important;
     cursor: auto;
 
+    // Keyboard navigation (j/k) marks the row; show it on the card, since the
+    // row's own marker is neutralised above.
     &.selected td:first-of-type {
       box-shadow: none;
+    }
+
+    &.selected .showcase-card {
+      outline: 2px solid var(--d-nav-color--active, var(--tertiary));
+      outline-offset: 2px;
     }
 
     // guard: only the card cell and the bulk select cell are rendered

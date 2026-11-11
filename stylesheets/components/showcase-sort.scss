@@ -8,3 +8,14 @@
     padding-inline: var(--space-2);
   }
 }
+
+// Core hides the breadcrumb row on narrow screens when the list has no
+// category (latest, tag pages). Card lists have no other sort control, so the
+// row is shown there with only the sort dropdown in it.
+.category-breadcrumb.hidden:has(.showcase-sort) {
+  display: flex !important;
+
+  > li:not(:has(.showcase-sort)) {
+    display: none;
+  }
+}

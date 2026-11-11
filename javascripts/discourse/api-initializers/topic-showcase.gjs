@@ -37,7 +37,13 @@ export default apiInitializer((api) => {
       return null;
     }
 
-    return layoutForCategory(context.category, site);
+    // Some list routes (tag intersections filtered by category) know their
+    // category only through the route, so fall back to it; the navigation
+    // controls resolve the layout from the route as well.
+    const category =
+      context.category ?? router.currentRoute?.attributes?.category;
+
+    return layoutForCategory(category, site);
   }
 
   // Card lists have no header row, so the bulk select toggle and the sort
