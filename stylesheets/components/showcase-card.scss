@@ -93,6 +93,14 @@
     }
   }
 
+  // Only the excerpt gives way when the content is taller than the card:
+  // without this the clamped title would shrink to a partial line or vanish.
+  &.--list &__body > * {
+    @include viewport.from(sm) {
+      flex-shrink: 0;
+    }
+  }
+
   &.--list &__title {
     @include viewport.from(sm) {
       display: -webkit-box;

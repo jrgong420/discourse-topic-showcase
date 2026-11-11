@@ -105,7 +105,13 @@ function loadEntries(store, config, tagName) {
 
 // The announcement of a contest, or null (cached too, as "none").
 async function loadAnnouncement(store, config, tagName) {
-  const tags = [tagName, ...config.announcementTags];
+  // The contest tag may also be listed as an announcement tag. Core's filter
+  // rejects a query that names the same tag twice, so each tag goes in once.
+  const seen = new Set();
+  const tags = [tagName, ...config.announcementTags].filter((tag) => {
+    const key = tag.toLowerCase();
+    return seen.has(key) ? false : seen.add(key);
+  });
 
   const { announcement } = await announcementCache.get(
     tags.join("+").toLowerCase(),
