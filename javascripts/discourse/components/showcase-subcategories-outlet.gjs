@@ -1,8 +1,12 @@
 import Component from "@glimmer/component";
 import { service } from "@ember/service";
 import { settings } from "virtual:theme";
+import { MAX_UNOPTIMIZED_CATEGORIES } from "discourse/lib/constants";
 import { parseIdList } from "../lib/card-layout.js";
-import { carouselSubcategories } from "../lib/subcategory-carousel.js";
+import {
+  carouselSubcategories,
+  subcategoryListIncomplete,
+} from "../lib/subcategory-carousel.js";
 import ShowcaseSubcategories from "./showcase-subcategories.gjs";
 
 /**
@@ -16,6 +20,7 @@ import ShowcaseSubcategories from "./showcase-subcategories.gjs";
  */
 export default class ShowcaseSubcategoriesOutlet extends Component {
   @service router;
+  @service site;
 
   // Empty when the carousel should not show.
   get subcategories() {
@@ -25,14 +30,26 @@ export default class ShowcaseSubcategoriesOutlet extends Component {
       return [];
     }
 
-    const list = this.router.currentRoute?.attributes?.subcategoryList;
+    const routeList = this.router.currentRoute?.attributes?.subcategoryList;
+    const list =
+      routeList?.parentCategory?.id === category.id ? routeList : null;
 
     return carouselSubcategories({
       categoryId: category.id,
       enabledIds: parseIdList(settings.subcategory_carousel_categories),
       minChildren: settings.subcategory_carousel_min_children,
-      listed: list?.parentCategory?.id === category.id ? list.content : null,
+      listed: list ? list.content : null,
       fallback: category.subcategories,
+      // Same condition as core's own "load more" for the list.
+      listIncomplete:
+        !!list &&
+        subcategoryListIncomplete({
+          paginated:
+            !!this.site.lazy_load_categories ||
+            this.site.categories.length > MAX_UNOPTIMIZED_CATEGORIES,
+          loaded: list.content?.length ?? 0,
+          fetchedLastPage: !!list.fetchedLastPage,
+        }),
     });
   }
 

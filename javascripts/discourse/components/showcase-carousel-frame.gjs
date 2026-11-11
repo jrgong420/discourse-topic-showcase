@@ -43,7 +43,12 @@ export default class ShowcaseCarouselFrame extends Component {
 
   // Sets Embla up on the viewport once it is in the DOM and destroys it when
   // the viewport goes away (collapse, leaving the page).
-  setupEmbla = modifier((element) => {
+  // Takes the items as an argument so Embla is rebuilt, starting at the first
+  // slide, when they change: core keeps this component mounted when moving
+  // between two categories that both have a carousel.
+  setupEmbla = modifier((element, [items]) => {
+    // Read so the modifier reruns when the items change.
+    void items;
     let embla;
     let cancelled = false;
 
@@ -181,7 +186,10 @@ export default class ShowcaseCarouselFrame extends Component {
           />
         {{/if}}
 
-        <div class="showcase-carousel-frame__viewport" {{this.setupEmbla}}>
+        <div
+          class="showcase-carousel-frame__viewport"
+          {{this.setupEmbla @items}}
+        >
           <div class="showcase-carousel-frame__track">
             {{#each @items as |item index|}}
               <div

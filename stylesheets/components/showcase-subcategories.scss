@@ -1,8 +1,16 @@
 @use "lib/viewport";
 
-// The carousel replaces core's own subcategory list. Everything core yields
-// into the header area before our connector is that list.
-#header-list-area > :has(~ .showcase-subcategories) {
+// The carousel replaces core's own subcategory list, which core renders in
+// the header area before our connector. Only the roots of core's list styles
+// (boxes, boxes with topics, rows, rows with featured topics) are hidden;
+// other connectors in the area stay.
+#header-list-area
+  > :is(
+    .category-boxes,
+    .category-boxes-with-topics,
+    .category-list,
+    :has(> .category-list)
+  ):has(~ .showcase-subcategories) {
   display: none;
 }
 

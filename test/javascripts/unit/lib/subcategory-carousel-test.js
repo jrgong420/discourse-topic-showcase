@@ -2,6 +2,7 @@ import { module, test } from "qunit";
 import {
   carouselSubcategories,
   categoryColor,
+  subcategoryListIncomplete,
 } from "../../../../javascripts/discourse/lib/subcategory-carousel.js";
 
 function child(id, parentId = 1) {
@@ -137,5 +138,23 @@ module("Unit | Lib | subcategory-carousel", function () {
     ]) {
       assert.strictEqual(categoryColor(value), null, String(value));
     }
+  });
+
+  test("an incomplete core list keeps core's list", function (assert) {
+    assert.deepEqual(
+      carouselSubcategories(
+        args({ listed: [child(2), child(3)], listIncomplete: true })
+      ),
+      []
+    );
+  });
+
+  test("subcategoryListIncomplete only on paginated sites with a full page", function (assert) {
+    const base = { paginated: true, loaded: 20, fetchedLastPage: false };
+
+    assert.true(subcategoryListIncomplete(base));
+    assert.false(subcategoryListIncomplete({ ...base, paginated: false }));
+    assert.false(subcategoryListIncomplete({ ...base, loaded: 19 }));
+    assert.false(subcategoryListIncomplete({ ...base, fetchedLastPage: true }));
   });
 });

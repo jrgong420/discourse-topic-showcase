@@ -1,3 +1,5 @@
+// Page size of core's category lists (`CategoryList::CATEGORIES_PER_PAGE`).
+const CATEGORIES_PER_PAGE = 20;
 const HEX_COLOR = /^[0-9a-f]{3}([0-9a-f]{3})?$/i;
 
 function toArray(value) {
@@ -19,6 +21,9 @@ function toArray(value) {
  *   (never below 2).
  * @param {Object[]} [args.listed] Categories of core's subcategory list.
  * @param {Object[]} [args.fallback] Subcategories of the category.
+ * @param {boolean} [args.listIncomplete] Core's list may have further pages
+ *   that are not loaded. The carousel cannot load them, so core's list
+ *   (which can) is kept instead.
  * @returns {Object[]} The subcategories, or an empty array when the carousel
  *   should not show.
  */
@@ -28,8 +33,13 @@ export function carouselSubcategories({
   minChildren,
   listed,
   fallback,
+  listIncomplete = false,
 }) {
-  if (categoryId == null || !toArray(enabledIds).includes(categoryId)) {
+  if (
+    listIncomplete ||
+    categoryId == null ||
+    !toArray(enabledIds).includes(categoryId)
+  ) {
     return [];
   }
 
@@ -40,6 +50,27 @@ export function carouselSubcategories({
 
   const min = Math.max(2, Number(minChildren) || 2);
   return children.length >= min ? children : [];
+}
+
+/**
+ * Whether core's subcategory list may have pages that are not loaded yet.
+ * Core pages it (20 per page) only on sites that lazy-load categories or have
+ * more than `MAX_UNOPTIMIZED_CATEGORIES`; a full first page there may have
+ * more behind it.
+ *
+ * @param {Object} args
+ * @param {boolean} args.paginated Whether core pages category lists.
+ * @param {number} args.loaded Categories loaded so far.
+ * @param {boolean} args.fetchedLastPage Whether core saw the last page.
+ * @param {number} [args.pageSize]
+ */
+export function subcategoryListIncomplete({
+  paginated,
+  loaded,
+  fetchedLastPage,
+  pageSize = CATEGORIES_PER_PAGE,
+}) {
+  return !!paginated && !fetchedLastPage && loaded >= pageSize;
 }
 
 /**
