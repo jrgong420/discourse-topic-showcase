@@ -34,10 +34,12 @@
   }
 
   // Tiles are compact, so arrows over their edges would cover the logo and
-  // text: from sm up the arrows always sit in gutters beside the tiles;
-  // below sm there is no room for gutters, and swiping, the peek and the
-  // pills carry the navigation.
+  // text: from sm up the arrows sit in gutters beside the tiles. Below sm
+  // there is room for half a gutter only, so the arrows overlap the tile
+  // edges by half their width.
   .showcase-carousel-frame__stage {
+    padding-inline: calc(var(--tc-TopicShowcase-carousel-size-arrow) / 2);
+
     @include viewport.from(sm) {
       padding-inline: calc(
         var(--tc-TopicShowcase-carousel-size-arrow) + var(--space-2)
@@ -54,18 +56,12 @@
   }
 
   .showcase-carousel-frame__arrow.btn {
-    @include viewport.until(sm) {
-      display: none;
+    &.--prev {
+      inset-inline-start: 0;
     }
 
-    @include viewport.from(sm) {
-      &.--prev {
-        inset-inline-start: 0;
-      }
-
-      &.--next {
-        inset-inline-end: 0;
-      }
+    &.--next {
+      inset-inline-end: 0;
     }
   }
 
