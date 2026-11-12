@@ -44,6 +44,7 @@ export function parseStatusBadges(raw) {
       label: text(item?.label),
       color: safeColor(item?.color),
       icon: text(item?.icon) || null,
+      showWeek: item?.show_week === true,
     }))
     .filter((badge) => badge.tag && badge.label)
     .map((badge) => ({ ...badge, key: badge.tag.toLowerCase() }));
@@ -86,4 +87,27 @@ export function tagsWithoutStatus(tags, badge) {
   }
 
   return list.filter((tag) => tagNamesOf([tag])[0].toLowerCase() !== badge.key);
+}
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * The running week of something that started at `start`: 1 during the first
+ * seven days, 2 during the next seven, and so on. Null without a valid start
+ * or when the start lies in the future.
+ *
+ * @param {string|Date|null|undefined} start
+ * @param {Date} [now]
+ * @returns {number|null}
+ */
+export function weekSince(start, now = new Date()) {
+  if (!start) {
+    return null;
+  }
+
+  const elapsed = now.getTime() - new Date(start).getTime();
+
+  return Number.isFinite(elapsed) && elapsed >= 0
+    ? Math.floor(elapsed / WEEK_MS) + 1
+    : null;
 }

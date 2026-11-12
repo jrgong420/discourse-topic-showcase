@@ -69,6 +69,7 @@ export default class ContestEntries extends Component {
             <ShowcaseCard
               @context="carousel"
               @layout={{this.layout}}
+              @showTags={{settings.contest_entries_show_tags}}
               @topic={{topic}}
             />
           </li>

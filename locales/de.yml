@@ -47,6 +47,9 @@ de:
             icon:
               label: "Symbol"
               description: "Optional. Name eines Symbols, das statt des Punkts vor der Beschriftung angezeigt wird. Verwende ein Symbol aus dem Standard-Symbolsatz oder ergänze es über svg_icons. Leer = kein Symbol."
+            show_week:
+              label: "Woche"
+              description: "Zeigt neben der Beschriftung die laufende Woche (W5), gezählt ab dem Startdatum des Kalender-Events des Themas (benötigt das Discourse-Calendar-Plugin und dessen Website-Einstellung, die Event-Daten an Thementiteln anzeigt). Themen ohne Event oder mit Start in der Zukunft zeigen keine Woche. Für Status, bei denen Zählen keinen Sinn ergibt (abgeschlossen, abgebrochen), ausgeschaltet lassen."
       carousel_enabled: "Zeigt auf der Startseite des Forums über der Themenliste ein Karussell mit empfohlenen Themen. Benötigt mindestens einen Tag in carousel_filter_tags."
       carousel_title: "Titel des Karussells. Leer lassen, um den Standardtitel (\"Empfohlen\") zu verwenden."
       carousel_filter_tags: "Themen müssen alle diese Tags tragen, um im Karussell zu erscheinen. Ohne Tags wird das Karussell nicht angezeigt."
@@ -69,6 +72,7 @@ de:
       contest_tag_group: "Name der Tag-Gruppe, deren Tags Wettbewerbs-Tags sind. Die Beiträge und die Ankündigung eines Wettbewerbs tragen dasselbe Wettbewerbs-Tag. Leer lassen, um Wettbewerbe auszuschalten. Die Gruppe muss für die Besucher sichtbar sein, die Wettbewerbe sehen sollen."
       contest_announcement_tags: "Ein Thema ist eine Wettbewerbsankündigung, wenn es ein Wettbewerbs-Tag und alle diese Tags trägt; andere Themen mit einem Wettbewerbs-Tag sind Beiträge. Wenn leer, wird stattdessen carousel_filter_tags verwendet. Ist beides leer, werden Wettbewerbe nicht angezeigt."
       contest_entries_position: "Wo die Liste der Wettbewerbsbeiträge im Ankündigungsthema erscheint. top = unter der Leiste unter dem Titel verborgen und mit deren Schaltfläche „Beiträge anzeigen“ zu öffnen; after_first_post = immer sichtbar nach dem ersten Beitrag, und die Schaltfläche der Leiste scrollt dorthin."
+      contest_entries_show_tags: "Zeigt die Schlagwörter auf den Karten in der Liste der Wettbewerbsbeiträge."
       contest_entries_layout: "Wie die Wettbewerbsbeiträge angezeigt werden: list = untereinander als Zeilen mit dem Vorschaubild links, grid = Karten in Spalten."
       contest_entries_order: "Reihenfolge der Beiträge. latest = zuletzt aktive zuerst, created = neuestes Thema zuerst."
       contest_max_entries: "Maximale Anzahl der Beitragskarten in der Liste der Beiträge. Gibt es mehr, erscheint ein Link zu allen Beiträgen."
@@ -83,6 +87,8 @@ de:
     views: "Aufrufe"
     activity: "Letzte Aktivität"
     published: "Veröffentlicht"
+    week: "Woche %{number}"
+    week_short: "W%{number}"
     carousel:
       default_title: "Empfohlen"
       collapse: "%{title} einklappen"

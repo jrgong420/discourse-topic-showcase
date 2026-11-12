@@ -21,6 +21,7 @@ import {
   parseStatusBadges,
   statusBadgeOf,
   tagsWithoutStatus,
+  weekSince,
 } from "../lib/status-badge.js";
 
 // Width in CSS pixels the thumbnail should cover in the list layout.
@@ -44,6 +45,8 @@ function configuredStatusBadges() {
  * @param {"list"|"grid"} @layout
  * @param {boolean} [@eventDate] Show the start date of the topic's calendar
  *   event (`event_starts_at`) as a badge over the thumbnail.
+ * @param {boolean} [@showTags] Overrides the setting that decides whether
+ *   the tag row is shown (the row is then only rendered when there are tags).
  * @param {"list"|"carousel"} [@context] Where the card is used. In the
  *   "carousel" context the card has a fixed height (clamped text) and reads
  *   the carousel_show_* settings for excerpt, tags, replies, likes and
@@ -148,6 +151,14 @@ export default class ShowcaseCard extends Component {
     return statusBadgeOf(this.args.topic.tags, configuredStatusBadges());
   }
 
+  // The running week of the topic, counted from the start of its calendar
+  // event, for statuses that ask for it (show_week). Null otherwise.
+  get statusWeek() {
+    return this.statusBadge?.showWeek
+      ? weekSince(this.args.topic.event_starts_at)
+      : null;
+  }
+
   // The colour only reaches the markup as a custom property, and only after
   // it passed the pattern check in parseStatusBadges.
   get statusStyle() {
@@ -190,6 +201,10 @@ export default class ShowcaseCard extends Component {
   }
 
   get showTags() {
+    if (this.args.showTags != null) {
+      return this.args.showTags && this.listedTags.length;
+    }
+
     return this.isCarousel
       ? settings.carousel_show_tags
       : settings.show_tags && this.listedTags.length;
@@ -258,6 +273,18 @@ export default class ShowcaseCard extends Component {
             <span
               class="showcase-card__status-label"
             >{{this.statusBadge.label}}</span>
+            {{#if this.statusWeek}}
+              <span
+                class="showcase-card__status-week"
+                title={{i18n
+                  (themePrefix "showcase.week")
+                  number=this.statusWeek
+                }}
+              >{{i18n
+                  (themePrefix "showcase.week_short")
+                  number=this.statusWeek
+                }}</span>
+            {{/if}}
           </span>
         {{/if}}
       </div>
