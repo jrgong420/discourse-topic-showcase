@@ -8,8 +8,10 @@ import ShowcaseCarouselOutlet from "../components/showcase-carousel-outlet.gjs";
 import ShowcaseSort from "../components/showcase-sort.gjs";
 import ShowcaseSubcategoriesOutlet from "../components/showcase-subcategories-outlet.gjs";
 import {
-  layoutForCategory,
   layoutForCurrentRoute,
+  layoutForList,
+  preloadLayoutTagGroups,
+  tagNameOfRoute,
 } from "../lib/route-layout.js";
 
 const BULK_SELECT_COLUMN = "bulk-select";
@@ -43,12 +45,21 @@ export default apiInitializer((api) => {
 
     // Some list routes (tag intersections filtered by category) know their
     // category only through the route, so fall back to it; the navigation
-    // controls resolve the layout from the route as well.
+    // controls resolve the layout from the route as well. The context carries
+    // no tag at all, so that always comes from the route.
     const category =
       context.category ?? router.currentRoute?.attributes?.category;
 
-    return layoutForCategory(category, site);
+    return layoutForList({
+      category,
+      tagName: tagNameOfRoute(router),
+      site,
+    });
   }
+
+  // The tag group rules need the tags of the listed groups; the layouts update
+  // when they arrive.
+  preloadLayoutTagGroups();
 
   // Card lists have no header row, so the bulk select toggle and the sort
   // dropdown live in the navigation controls.

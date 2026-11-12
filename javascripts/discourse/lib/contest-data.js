@@ -1,5 +1,4 @@
 import { settings } from "virtual:theme";
-import { ajax } from "discourse/lib/ajax";
 import {
   announcementOf,
   contestTagOf,
@@ -9,6 +8,7 @@ import {
 } from "./contest.js";
 import { createPromiseCache } from "./promise-cache.js";
 import { canFilterTags, parseTagList } from "./tag-filter.js";
+import { fetchTagGroups } from "./tag-group-fetch.js";
 import { fetchTopicsByTags } from "./tag-topics.js";
 
 // Everything here is cached for the page session, so the strip, the full list
@@ -65,20 +65,17 @@ export function contestConfig() {
   };
 }
 
-// The tags ({id, name, slug}) of the contest tag group. One request, via the
-// tag group search, which only lists groups the current user can see; an
-// unknown or invisible group has no tags.
+// The tags ({id, name, slug}) of the contest tag group. One request (see
+// fetchTagGroups); an unknown or invisible group has no tags.
 function loadGroupTags(group) {
   return groupCache.get(group.toLowerCase(), async () => {
-    const json = await ajax("/tag_groups/filter/search.json", {
-      data: { names: [group] },
-    });
+    const results = await fetchTagGroups([group]);
 
-    if (!Array.isArray(json?.results)) {
+    if (!results) {
       return null;
     }
 
-    const match = json.results.find(
+    const match = results.find(
       (result) => String(result.name).toLowerCase() === group.toLowerCase()
     );
 

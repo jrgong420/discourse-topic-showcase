@@ -10,6 +10,10 @@ de:
       mobile_list_view_categories: "Kategorien, die mobil als Kartenliste angezeigt werden."
       mobile_grid_view_categories: "Kategorien, die mobil als Kartenraster angezeigt werden."
       inherit_layout_to_subcategories: "Unterkategorien ohne eigene Regel verwenden das Layout der nächsten aufgeführten übergeordneten Kategorie."
+      list_view_tags: "Tags, deren Seiten als Kartenliste angezeigt werden, auf Desktop und mobil. Eine Tag-Regel hat Vorrang vor den Kategorie-Regeln und den Standardwerten. Bei einer Seite mit weiteren Tags (Tag-Schnittmenge) zählt nur das erste Tag. Tags werden über den Namen zugeordnet, Groß- und Kleinschreibung spielt keine Rolle. Steht ein Tag auch in grid_view_tags, gewinnt die Liste."
+      grid_view_tags: "Tags, deren Seiten als Kartenraster angezeigt werden, auf Desktop und mobil. Eine Tag-Regel hat Vorrang vor den Kategorie-Regeln und den Standardwerten. Bei einer Seite mit weiteren Tags (Tag-Schnittmenge) zählt nur das erste Tag. Tags werden über den Namen zugeordnet, Groß- und Kleinschreibung spielt keine Rolle. Steht ein Tag auch in list_view_tags, gewinnt die Liste."
+      list_view_tag_groups: "Namen von Tag-Gruppen, deren Tags auf ihren Seiten als Kartenliste angezeigt werden, auf Desktop und mobil. Gilt für ein Tag, das nicht selbst in list_view_tags oder grid_view_tags steht, und hat Vorrang vor den Kategorie-Regeln und den Standardwerten. Die Gruppen müssen für die Besucher sichtbar sein; die Tags der Gruppen werden beim Öffnen der Seite einmal geladen, bis dahin gelten die Gruppen nicht. Steht ein Tag auch in einer Gruppe aus grid_view_tag_groups, gewinnt die Liste."
+      grid_view_tag_groups: "Namen von Tag-Gruppen, deren Tags auf ihren Seiten als Kartenraster angezeigt werden, auf Desktop und mobil. Gilt für ein Tag, das nicht selbst in list_view_tags oder grid_view_tags steht, und hat Vorrang vor den Kategorie-Regeln und den Standardwerten. Die Gruppen müssen für die Besucher sichtbar sein; die Tags der Gruppen werden beim Öffnen der Seite einmal geladen, bis dahin gelten die Gruppen nicht. Steht ein Tag auch in einer Gruppe aus list_view_tag_groups, gewinnt die Liste."
       show_excerpt: "Auszug des Themas auf den Karten anzeigen."
       show_category: "Kategorie-Badge auf den Karten anzeigen."
       show_tags: "Tags auf den Karten anzeigen."
@@ -27,6 +31,22 @@ de:
       card_gap: "Abstand in Pixeln zwischen den Karten im Listen- und Rasterlayout (auch die Karussell-Folien und die Wettbewerbsbeiträge verwenden ihn). 0 = kein Abstand zwischen den Karten."
       thumbnail_placeholder_icon: "Symbol für Karten, deren Thema kein Bild hat. Verwende ein Symbol aus dem Standard-Symbolsatz oder ergänze es über svg_icons."
       card_border_radius: "Rundung der Kartenecken."
+      status_badges:
+        description: "Tags, die als Status-Badge über dem Vorschaubild einer Karte angezeigt werden (zum Beispiel die Phase eines Grow-Reports oder der Status eines Wettbewerbs). Die Reihenfolge ist die Priorität: Ein Thema bekommt das Badge des ersten Eintrags, dessen Tag es trägt, und nur ein Badge. Ein Tag, das als Badge angezeigt wird, entfällt in der Tag-Zeile der Karte. Das Symbol muss im Standard-Symbolsatz sein oder über svg_icons ergänzt werden."
+        schema:
+          properties:
+            tag:
+              label: "Tag"
+              description: "Name des Tags, das den Status ergibt (Groß- und Kleinschreibung spielt keine Rolle)."
+            label:
+              label: "Beschriftung"
+              description: "Text des Badges."
+            color:
+              label: "Farbe"
+              description: "Optional. Eine Hex-Farbe wie #3a8f3a oder ein Farbname wie green. Sie wird als Punkt vor der Beschriftung angezeigt oder färbt das Symbol. Leer = neutral."
+            icon:
+              label: "Symbol"
+              description: "Optional. Name eines Symbols, das statt des Punkts vor der Beschriftung angezeigt wird. Verwende ein Symbol aus dem Standard-Symbolsatz oder ergänze es über svg_icons. Leer = kein Symbol."
       carousel_enabled: "Zeigt auf der Startseite des Forums über der Themenliste ein Karussell mit empfohlenen Themen. Benötigt mindestens einen Tag in carousel_filter_tags."
       carousel_title: "Titel des Karussells. Leer lassen, um den Standardtitel (\"Empfohlen\") zu verwenden."
       carousel_filter_tags: "Themen müssen alle diese Tags tragen, um im Karussell zu erscheinen. Ohne Tags wird das Karussell nicht angezeigt."
@@ -52,7 +72,7 @@ de:
       contest_entries_layout: "Wie die Wettbewerbsbeiträge angezeigt werden: list = untereinander als Zeilen mit dem Vorschaubild links, grid = Karten in Spalten."
       contest_entries_order: "Reihenfolge der Beiträge. latest = zuletzt aktive zuerst, created = neuestes Thema zuerst."
       contest_max_entries: "Maximale Anzahl der Beitragskarten in der Liste der Beiträge. Gibt es mehr, erscheint ein Link zu allen Beiträgen."
-      contest_strip_thumbnails: "Anzahl der Beitrags-Vorschaubilder in der Leiste unter dem Titel. 0 zeigt keine. Beiträge ohne Bild werden übersprungen."
+      contest_strip_avatars: "Anzahl der Teilnehmer-Avatare in der Leiste unter dem Titel. 0 zeigt keine. Die Avatare gehören zu den Verfassern der Beiträge, jeder Teilnehmer einmal, in der Reihenfolge der Beiträge; gibt es mehr Teilnehmer, schließt ein +n-Kreis die Reihe ab."
   showcase:
     sort:
       label: "Sortieren nach"
@@ -80,11 +100,11 @@ de:
         one: "%{number} Thema"
         other: "%{number} Themen"
   contest:
-    strip_label: "Wettbewerbsbeiträge"
-    entries:
-      one: "%{count} Beitrag"
-      other: "%{count} Beiträge"
-    entries_more: "%{count}+ Beiträge"
+    strip_label: "Wettbewerbsteilnehmer"
+    participants:
+      one: "%{count} Teilnehmer"
+      other: "%{count} Teilnehmer"
+    participants_more: "%{count}+ Teilnehmer"
     show_entries: "Beiträge anzeigen"
     hide_entries: "Beiträge ausblenden"
     heading: "Beiträge (%{number})"

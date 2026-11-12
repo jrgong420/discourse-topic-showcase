@@ -2,10 +2,7 @@
 // and which topics count as entries. No Ember, no DOM, so they are unit
 // testable.
 import { hasAllTags } from "./carousel-topics.js";
-
-function nameOf(tag) {
-  return String(tag?.name ?? tag);
-}
+import { tagNameOf } from "./tag-names.js";
 
 /**
  * The first of the topic's tags that is a contest tag, or null. Case
@@ -18,14 +15,14 @@ function nameOf(tag) {
  */
 export function contestTagOf(topicTagNames, contestTagNames) {
   const contestTags = new Set(
-    contestTagNames.map((n) => nameOf(n).toLowerCase())
+    contestTagNames.map((n) => tagNameOf(n).toLowerCase())
   );
 
   const match = (topicTagNames ?? []).find((tag) =>
-    contestTags.has(nameOf(tag).toLowerCase())
+    contestTags.has(tagNameOf(tag).toLowerCase())
   );
 
-  return match === undefined ? null : nameOf(match);
+  return match === undefined ? null : tagNameOf(match);
 }
 
 /**
@@ -93,4 +90,58 @@ export function announcementOf(topics, contestTagName, announcementTagNames) {
       hasAllTags(topic, [contestTagName, ...announcementTagNames])
     ) ?? null
   );
+}
+
+// What identifies a creator across entries: the user id, else the username.
+// Null when the creator carries neither (nothing to tell it apart by).
+function creatorKey(creator) {
+  if (creator?.id != null) {
+    return `id:${creator.id}`;
+  }
+  if (creator?.username) {
+    return `username:${String(creator.username).toLowerCase()}`;
+  }
+  return null;
+}
+
+/**
+ * The participants of a contest: the distinct creators of its entries.
+ *
+ * - `count`: the number of participants. An entry without a (usable) creator
+ *   counts as a participant of its own, as it cannot be matched to another
+ *   entry.
+ * - `avatars`: the first `maxAvatars` distinct creators in entry order. Only
+ *   creators can be shown, so entries without one add to the count only.
+ * - `extra`: the participants not covered by `avatars`. 0 when no avatar is
+ *   shown at all, as a lone "+n" would say nothing.
+ *
+ * @param {Object[]} entries Topics (anything with a `creator`).
+ * @param {number} maxAvatars
+ * @returns {{count: number, avatars: Object[], extra: number}}
+ */
+export function participantsOf(entries, maxAvatars) {
+  const seen = new Set();
+  const creators = [];
+  let unknown = 0;
+
+  for (const entry of entries ?? []) {
+    const key = creatorKey(entry?.creator);
+
+    if (key === null) {
+      unknown += 1;
+    } else if (!seen.has(key)) {
+      seen.add(key);
+      creators.push(entry.creator);
+    }
+  }
+
+  const count = creators.length + unknown;
+  const limit = Number.isFinite(maxAvatars) ? Math.max(0, maxAvatars) : 0;
+  const avatars = creators.slice(0, limit);
+
+  return {
+    count,
+    avatars,
+    extra: avatars.length ? count - avatars.length : 0,
+  };
 }

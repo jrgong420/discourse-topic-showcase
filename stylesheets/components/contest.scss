@@ -16,6 +16,10 @@
 // is one control: a button that opens the entries below it, or a link to the
 // entries after the first post.
 .contest-strip {
+  // The strip's background; the avatar rings use it too, so they must change
+  // with it on hover.
+  --tc-TopicShowcase-ContestStrip-color-background: var(--tertiary-very-low);
+
   @extend %post-column;
   display: flex;
   flex-wrap: wrap;
@@ -26,7 +30,7 @@
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--tertiary-low);
   border-radius: var(--d-border-radius-large);
-  background: var(--tertiary-very-low);
+  background: var(--tc-TopicShowcase-ContestStrip-color-background);
   color: var(--primary);
   font: inherit;
   text-align: start;
@@ -36,8 +40,8 @@
   // The hover colour is set explicitly: the parent theme's link hover would
   // recolour the text when the strip is a link.
   &:hover {
+    --tc-TopicShowcase-ContestStrip-color-background: var(--tertiary-low);
     border-color: var(--tertiary-medium);
-    background: var(--tertiary-low);
     color: var(--primary);
     text-decoration: none;
   }
@@ -56,30 +60,48 @@
     font-weight: 600;
   }
 
-  // Decorative thumbnails of some entries; the strip itself is the control.
-  &__thumbnails {
+  // Decorative avatars of some participants, overlapping like a stack; the
+  // strip itself is the control. Each avatar has a ring in the colour of the
+  // strip, so the avatars stay apart where they overlap. The later avatar
+  // sits on top, and the overlap uses a logical margin so it also works RTL.
+  &__avatars {
     display: flex;
     align-items: center;
-    gap: var(--space-1);
+    padding-inline-start: var(--space-2);
   }
 
-  &__thumbnail {
+  &__avatar {
     display: block;
+    flex: none;
     box-sizing: border-box;
-    width: 2rem;
-    height: 2rem;
-    border: 1px solid var(--primary-low);
-    border-radius: var(--d-border-radius);
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
     background: var(--primary-low);
-    object-fit: cover;
+    box-shadow: 0 0 0 2px var(--tc-TopicShowcase-ContestStrip-color-background);
+    overflow: hidden;
 
-    // Entry without an image: the card placeholder icon, at strip size.
-    &.--placeholder {
+    & + & {
+      margin-inline-start: calc(var(--space-2) * -1);
+    }
+
+    .avatar {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    // The "+n" chip that ends the stack.
+    &.--more {
       display: grid;
       place-items: center;
-      background: var(--primary-very-low);
-      color: var(--primary-low-mid);
-      font-size: var(--font-down-1);
+      background: var(--primary-low);
+      color: var(--primary-high);
+      font-size: var(--font-down-2);
+      font-weight: 600;
+      line-height: 1;
     }
   }
 

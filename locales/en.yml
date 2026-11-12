@@ -10,6 +10,10 @@ en:
       mobile_list_view_categories: "Categories shown as a list of cards on mobile."
       mobile_grid_view_categories: "Categories shown as a grid of cards on mobile."
       inherit_layout_to_subcategories: "Subcategories without their own rule use the layout of their nearest listed parent category."
+      list_view_tags: "Tags whose pages are shown as a list of cards, on desktop and mobile. A tag rule beats the category rules and the defaults. On a page with further tags (a tag intersection) only the first tag counts. Tags are matched by name, ignoring case. If a tag is also in grid_view_tags, the list wins."
+      grid_view_tags: "Tags whose pages are shown as a grid of cards, on desktop and mobile. A tag rule beats the category rules and the defaults. On a page with further tags (a tag intersection) only the first tag counts. Tags are matched by name, ignoring case. If a tag is also in list_view_tags, the list wins."
+      list_view_tag_groups: "Names of tag groups whose tags are shown as a list of cards on their pages, on desktop and mobile. Applies to a tag that is not listed in list_view_tags or grid_view_tags itself, and beats the category rules and the defaults. The groups must be visible to the visitors; the tags of the groups are loaded once when the page opens, and until then the groups do not apply. If a tag is also in a group of grid_view_tag_groups, the list wins."
+      grid_view_tag_groups: "Names of tag groups whose tags are shown as a grid of cards on their pages, on desktop and mobile. Applies to a tag that is not listed in list_view_tags or grid_view_tags itself, and beats the category rules and the defaults. The groups must be visible to the visitors; the tags of the groups are loaded once when the page opens, and until then the groups do not apply. If a tag is also in a group of list_view_tag_groups, the list wins."
       show_excerpt: "Show the topic excerpt on cards."
       show_category: "Show the category badge on cards."
       show_tags: "Show the tags on cards."
@@ -27,6 +31,22 @@ en:
       card_gap: "Space in pixels between cards, in the list and grid layouts (the carousel slides and the contest entries use it too). 0 = no space between the cards."
       thumbnail_placeholder_icon: "Icon shown on cards whose topic has no image. Use an icon from the default icon set, or add the icon via svg_icons."
       card_border_radius: "Corner rounding of cards."
+      status_badges:
+        description: "Tags that are shown as a status badge over the thumbnail of a card (for example the phase of a grow report or the status of a contest). The order is the priority: a topic gets the badge of the first entry whose tag it carries, and only one badge. A tag shown as a badge is left out of the tag row of the card. The icon must be in the default icon set, or be added via svg_icons."
+        schema:
+          properties:
+            tag:
+              label: "Tag"
+              description: "Name of the tag that gives the status (ignoring case)."
+            label:
+              label: "Label"
+              description: "Text of the badge."
+            color:
+              label: "Colour"
+              description: "Optional. A hex colour such as #3a8f3a, or a colour name such as green. It is shown as a dot before the label, or colours the icon. Empty = neutral."
+            icon:
+              label: "Icon"
+              description: "Optional. Name of an icon shown before the label instead of the dot. Use an icon from the default icon set, or add the icon via svg_icons. Empty = no icon."
       carousel_enabled: "Show a carousel of featured topics above the topic list on the forum homepage. Needs at least one tag in carousel_filter_tags."
       carousel_title: "Title of the carousel. Leave empty to use the default title (\"Featured\")."
       carousel_filter_tags: "Topics must carry all of these tags to appear in the carousel. With no tags the carousel is not shown."
@@ -52,7 +72,7 @@ en:
       contest_entries_layout: "How the contest entries are shown: list = stacked rows with the thumbnail on the left, grid = cards in columns."
       contest_entries_order: "Order of the entries. latest = most recently active first, created = newest topic first."
       contest_max_entries: "Maximum number of entry cards in the list of entries. A link to all entries appears when there are more."
-      contest_strip_thumbnails: "Number of entry thumbnails in the strip under the title. 0 shows none. Entries without an image are skipped."
+      contest_strip_avatars: "Number of participant avatars in the strip under the title. 0 shows none. The avatars are those of the creators of the entries, each participant once, in the order of the entries; if there are more participants, a +n chip ends the row."
   showcase:
     sort:
       label: "Sort by"
@@ -80,11 +100,11 @@ en:
         one: "%{number} topic"
         other: "%{number} topics"
   contest:
-    strip_label: "Contest entries"
-    entries:
-      one: "%{count} entry"
-      other: "%{count} entries"
-    entries_more: "%{count}+ entries"
+    strip_label: "Contest participants"
+    participants:
+      one: "%{count} participant"
+      other: "%{count} participants"
+    participants_more: "%{count}+ participants"
     show_entries: "Show entries"
     hide_entries: "Hide entries"
     heading: "Entries (%{number})"
