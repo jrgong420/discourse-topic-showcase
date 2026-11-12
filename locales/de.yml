@@ -36,7 +36,7 @@ de:
       carousel_display_upcoming_events: "Themen anzeigen, deren Kalendertermin noch nicht begonnen hat (benötigt das Discourse-Calendar-Plugin). Themen ohne Termin werden nie ausgeblendet. Benötigt die Discourse-Calendar-Einstellung, die Event-Daten am Thementitel anzeigt; ohne sie enthalten Themenlisten keine Event-Daten und es wird nichts gefiltert."
       carousel_slides_per_view: "Anzahl der gleichzeitig sichtbaren Karten auf großen Bildschirmen. Schmale Bildschirme zeigen immer eine Karte, von der nächsten ist ein Teil sichtbar."
       carousel_scroll_by: "Wie weit die Pfeile das Karussell bewegen: um eine Karte (card) oder um eine ganze Seite sichtbarer Karten (page). Gilt für beide Karussells (empfohlene Themen und Unterkategorien)."
-      carousel_loop: "Von der letzten Karte wieder zur ersten springen und umgekehrt. Gilt für beide Karussells (empfohlene Themen und Unterkategorien)."
+      carousel_loop: "Von der letzten Karte wieder zur ersten springen und umgekehrt. Bei wenigen Karten springen die Pfeile stattdessen ans andere Ende. Gilt für beide Karussells (empfohlene Themen und Unterkategorien)."
       carousel_collapsible: "Besucher können das Karussell einklappen. Die Wahl wird pro Browser gespeichert, und ein eingeklapptes Karussell zeigt an, wie viele Themen seit dem letzten Öffnen neu sind."
       carousel_show_excerpt: "Auszug des Themas auf den Karussell-Karten anzeigen (auf zwei Zeilen begrenzt)."
       carousel_show_tags: "Tags auf den Karussell-Karten anzeigen (eine Zeile)."

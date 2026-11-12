@@ -129,14 +129,37 @@ export default class ShowcaseCarouselFrame extends Component {
     return document.documentElement.classList.contains("rtl");
   }
 
+  // With `carousel_loop` the arrows (and arrow keys) always go on: past the
+  // last slide back to the first and before the first to the last. Embla
+  // loops seamlessly only when there are enough slides to fill the row
+  // twice and silently stops at the ends otherwise; there the arrows jump
+  // to the other end instead.
   @action
   scrollPrev() {
-    this.embla?.scrollPrev();
+    const embla = this.embla;
+    if (!embla) {
+      return;
+    }
+
+    if (settings.carousel_loop && !embla.canScrollPrev()) {
+      embla.scrollTo(embla.scrollSnapList().length - 1);
+    } else {
+      embla.scrollPrev();
+    }
   }
 
   @action
   scrollNext() {
-    this.embla?.scrollNext();
+    const embla = this.embla;
+    if (!embla) {
+      return;
+    }
+
+    if (settings.carousel_loop && !embla.canScrollNext()) {
+      embla.scrollTo(0);
+    } else {
+      embla.scrollNext();
+    }
   }
 
   @action
