@@ -49,7 +49,7 @@ en:
               description: "Optional. Name of an icon shown before the label instead of the dot. Use an icon from the default icon set, or add the icon via svg_icons. Empty = no icon."
             show_week:
               label: "Week"
-              description: "Show the running week next to the label (W5), counted from the start date of the topic's calendar event (needs the Discourse Calendar plugin and its site setting that shows event dates on topic titles). Topics without an event, or with a start in the future, show no week. Leave off for statuses where counting makes no sense (finished, aborted)."
+              description: "Show the running week next to the label (W5), counted from the start date of the topic's calendar event (needs the Discourse Calendar plugin and its site setting that shows event dates on topic titles). The count stops at the end date of the event, if it has one and it has passed. Topics without an event, or with a start in the future, show no week. Leave off for statuses where counting makes no sense (finished, aborted)."
       carousel_enabled: "Show a carousel of featured topics above the topic list on the forum homepage. Needs at least one tag in carousel_filter_tags."
       carousel_title: "Title of the carousel. Leave empty to use the default title (\"Featured\")."
       carousel_filter_tags: "Topics must carry all of these tags to appear in the carousel. With no tags the carousel is not shown."

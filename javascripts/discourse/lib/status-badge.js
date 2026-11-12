@@ -93,19 +93,27 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * The running week of something that started at `start`: 1 during the first
- * seven days, 2 during the next seven, and so on. Null without a valid start
- * or when the start lies in the future.
+ * seven days, 2 during the next seven, and so on. With an `end` in the past
+ * the count stops there (the week the end fell in). Null without a valid
+ * start, when the start lies in the future, or when the end is before the
+ * start.
  *
  * @param {string|Date|null|undefined} start
+ * @param {string|Date|null|undefined} [end]
  * @param {Date} [now]
  * @returns {number|null}
  */
-export function weekSince(start, now = new Date()) {
+export function weekSince(start, end = null, now = new Date()) {
   if (!start) {
     return null;
   }
 
-  const elapsed = now.getTime() - new Date(start).getTime();
+  const startTime = new Date(start).getTime();
+  const endTime = end ? new Date(end).getTime() : NaN;
+  const until = Number.isFinite(endTime)
+    ? Math.min(endTime, now.getTime())
+    : now.getTime();
+  const elapsed = until - startTime;
 
   return Number.isFinite(elapsed) && elapsed >= 0
     ? Math.floor(elapsed / WEEK_MS) + 1

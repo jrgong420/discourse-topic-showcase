@@ -4,6 +4,7 @@ import {
   safeColor,
   statusBadgeOf,
   tagsWithoutStatus,
+  weekSince,
 } from "../../../../javascripts/discourse/lib/status-badge.js";
 
 const BADGES = parseStatusBadges([
@@ -161,6 +162,40 @@ module("Unit | Lib | status-badge", function () {
       const badge = statusBadgeOf(["growth"], BADGES);
 
       assert.deepEqual(tagsWithoutStatus(["growth"], badge), []);
+    });
+  });
+
+  module("weekSince", function () {
+    const NOW = new Date("2026-11-12T12:00:00Z");
+
+    test("counts running weeks from the start", function (assert) {
+      assert.strictEqual(weekSince("2026-11-12T00:00:00Z", null, NOW), 1);
+      assert.strictEqual(weekSince("2026-11-05T12:00:00Z", null, NOW), 2);
+      assert.strictEqual(weekSince("2026-10-01T12:00:00Z", null, NOW), 7);
+    });
+
+    test("stops at an end in the past", function (assert) {
+      assert.strictEqual(
+        weekSince("2026-01-01T00:00:00Z", "2026-01-20T00:00:00Z", NOW),
+        3
+      );
+    });
+
+    test("ignores an end in the future", function (assert) {
+      assert.strictEqual(
+        weekSince("2026-11-05T12:00:00Z", "2027-01-01T00:00:00Z", NOW),
+        2
+      );
+    });
+
+    test("no week without a start, before the start or with a bad range", function (assert) {
+      assert.strictEqual(weekSince(null, null, NOW), null);
+      assert.strictEqual(weekSince("nonsense", null, NOW), null);
+      assert.strictEqual(weekSince("2026-12-01T00:00:00Z", null, NOW), null);
+      assert.strictEqual(
+        weekSince("2026-02-01T00:00:00Z", "2026-01-01T00:00:00Z", NOW),
+        null
+      );
     });
   });
 });

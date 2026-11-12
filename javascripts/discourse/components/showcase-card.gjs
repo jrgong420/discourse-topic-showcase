@@ -152,11 +152,15 @@ export default class ShowcaseCard extends Component {
   }
 
   // The running week of the topic, counted from the start of its calendar
-  // event, for statuses that ask for it (show_week). Null otherwise.
+  // event and no further than its end, for statuses that ask for it
+  // (show_week). Null otherwise.
   get statusWeek() {
-    return this.statusBadge?.showWeek
-      ? weekSince(this.args.topic.event_starts_at)
-      : null;
+    if (!this.statusBadge?.showWeek) {
+      return null;
+    }
+
+    const { event_starts_at: start, event_ends_at: end } = this.args.topic;
+    return weekSince(start, end);
   }
 
   // The colour only reaches the markup as a custom property, and only after
