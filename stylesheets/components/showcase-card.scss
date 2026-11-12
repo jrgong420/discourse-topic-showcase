@@ -395,9 +395,21 @@
     -webkit-line-clamp: 2;
   }
 
+  // One line of tags, cut at the edge. Core lets its tag list wrap and gives
+  // tags a larger size on topic pages, so both are set on its elements.
   .showcase-card__tags {
     overflow: hidden;
     white-space: nowrap;
+
+    .discourse-tags {
+      flex-wrap: nowrap;
+      overflow: hidden;
+    }
+
+    .discourse-tag {
+      flex: none;
+      font-size: var(--font-down-1);
+    }
   }
 
   .showcase-card__footer {
