@@ -77,6 +77,24 @@ de:
       contest_entries_order: "Reihenfolge der Beiträge. latest = zuletzt aktive zuerst, created = neuestes Thema zuerst."
       contest_max_entries: "Maximale Anzahl der Beitragskarten in der Liste der Beiträge. Gibt es mehr, erscheint ein Link zu allen Beiträgen."
       contest_strip_avatars: "Anzahl der Teilnehmer-Avatare in der Leiste unter dem Titel. 0 zeigt keine. Die Avatare gehören zu den Verfassern der Beiträge, jeder Teilnehmer einmal, in der Reihenfolge der Beiträge; gibt es mehr Teilnehmer, schließt ein +n-Kreis die Reihe ab."
+      homepage_enabled: "Ersetzt die Startseite des Forums durch eine eigene Startseite aus den folgenden Abschnitten. Neueste, Kategorien und die anderen Listen bleiben über das Menü erreichbar. Ausschalten stellt die normale Startseite wieder her."
+      homepage_featured_carousel: "Zeigt das Karussell der hervorgehobenen Themen oben auf der eigenen Startseite. Nutzt die carousel_*-Einstellungen und braucht carousel_filter_tags."
+      homepage_releases_tags: "Abschnitt Releases: Themen mit allen diesen Schlagwörtern, neueste zuerst, als kompakte Zeilen. Leer = Abschnitt ausgeblendet."
+      homepage_releases_count: "Anzahl Themen im Abschnitt Releases. 0 blendet ihn aus."
+      homepage_gallery_category: "Abschnitt Showcase: die neuesten Themen dieser Kategorie (bei mehreren die erste) als Karten mit Vorschaubild. Leer = Abschnitt ausgeblendet."
+      homepage_gallery_count: "Anzahl Karten im Abschnitt Showcase. 0 blendet ihn aus."
+      homepage_latest_count: "Anzahl Themen im Abschnitt Neueste Themen (die Neueste-Liste der Besucher, stummgeschaltete Kategorien bleiben ausgeblendet). 0 blendet ihn aus."
+      homepage_partners_tags: "Abschnitt Partner: Themen mit allen diesen Schlagwörtern, als Logo-Kacheln (Bild des Themas) mit Titel. Kombinierbar mit homepage_partners_category."
+      homepage_partners_category: "Abschnitt Partner: nur Themen dieser Kategorie. Ohne Schlagwörter und Kategorie ist der Abschnitt ausgeblendet."
+      homepage_partners_count: "Anzahl Kacheln im Abschnitt Partner. 0 blendet ihn aus."
+      homepage_deals_tags: "Abschnitt Angebote: Themen mit allen diesen Schlagwörtern, neueste zuerst. Leer = ausgeblendet; ohne passende Themen blendet er sich selbst aus."
+      homepage_deals_count: "Anzahl Themen im Abschnitt Angebote. 0 blendet ihn aus."
+      homepage_docs_category: "Abschnitt Dokumentation: die Unterkategorien dieser Kategorie als Inhaltsverzeichnis mit Themenanzahl und Link zur Kategorie. Leer = ausgeblendet."
+      homepage_docs_count: "Anzahl Unterkategorien im Abschnitt Dokumentation. 0 blendet ihn aus."
+      homepage_docs_descriptions: "Zeigt im Abschnitt Dokumentation die Beschreibung jeder Unterkategorie unter ihrem Namen."
+      homepage_questions_category: "Abschnitt Offene Fragen (Seitenspalte): die neuesten Themen dieser Kategorie (bei mehreren die erste). Leer = ausgeblendet."
+      homepage_questions_count: "Anzahl Themen im Abschnitt Offene Fragen. 0 blendet ihn aus."
+      homepage_questions_unsolved: "Nur Themen ohne akzeptierte Lösung zeigen (braucht das Solved-Plugin mit aktivierten Lösungen in dieser Kategorie)."
   showcase:
     sort:
       label: "Sortieren nach"
@@ -116,3 +134,25 @@ de:
     heading: "Beiträge (%{number})"
     view_all: "Alle Beiträge anzeigen"
     backlink: "Teil des Wettbewerbs:"
+  homepage:
+    see_all: "Alle anzeigen"
+    category_open: "%{name} öffnen"
+    category_more:
+      one: "%{name}: %{count} weiterer Bereich"
+      other: "%{name}: %{count} weitere Bereiche"
+    load_error: "Dieser Abschnitt konnte nicht geladen werden."
+    retry: "Erneut versuchen"
+    releases:
+      title: "Releases"
+    gallery:
+      title: "Showcase"
+    latest:
+      title: "Neueste Themen"
+    partners:
+      title: "Partner"
+    deals:
+      title: "Angebote"
+    docs:
+      title: "Dokumentation"
+    questions:
+      title: "Offene Fragen"

@@ -1,0 +1,99 @@
+// The custom homepage layout. The outlet is a size container, so the columns
+// follow the space the page actually gets (an open sidebar counts).
+// Core 2026.7 has no lib/container mixins yet: md = 48rem is written out.
+.homepage-blocks {
+  container-type: inline-size;
+  container-name: homepage-blocks;
+
+  // Narrow: one column, main column first, then the side column. The groups
+  // dissolve so the panels can be ordered explicitly.
+  &__layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  &__block-container--main,
+  &__block-container--side {
+    display: contents;
+  }
+
+  &__block--featured {
+    order: 0;
+  }
+
+  &__block--releases {
+    order: 1;
+  }
+
+  &__block--docs {
+    order: 2;
+  }
+
+  &__block--latest {
+    order: 3;
+  }
+
+  &__block--gallery {
+    order: 4;
+  }
+
+  &__block--partners {
+    order: 5;
+  }
+
+  &__block--questions {
+    order: 6;
+  }
+
+  &__block--deals {
+    order: 7;
+  }
+
+  // Core keeps a wrapper per block even when it renders nothing.
+  &__block:not(:has(.homepage-panel, .homepage-featured-carousel *)) {
+    display: none;
+  }
+
+  // Wide: carousel across the top, main column and side column under it.
+  @container homepage-blocks (min-width: 48rem) {
+    &__layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      grid-template-areas:
+        "featured featured"
+        "main side";
+      align-items: start;
+    }
+
+    &__block--featured {
+      grid-area: featured;
+    }
+
+    &__block-container--main,
+    &__block-container--side {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      min-width: 0;
+
+      &:not(:has(.homepage-panel)) {
+        display: none;
+      }
+    }
+
+    &__block-container--main {
+      grid-area: main;
+    }
+
+    &__block-container--side {
+      grid-area: side;
+    }
+
+    // Without a side column the main column takes the full width.
+    &__layout:not(:has(.homepage-blocks__block-container--side .homepage-panel))
+      .homepage-blocks__block-container--main {
+      grid-column: 1 / -1;
+    }
+  }
+}

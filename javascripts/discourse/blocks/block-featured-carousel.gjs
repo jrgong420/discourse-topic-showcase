@@ -4,18 +4,18 @@ import { block } from "discourse/blocks";
 import ShowcaseCarousel from "../components/showcase-carousel.gjs";
 
 /**
- * The featured topics carousel as a block, so a theme with a block-based
- * homepage can place it in its layout:
+ * The featured topics carousel as a block. It is the same carousel the
+ * component shows above the topic list on the standard homepage, with the
+ * same carousel_* settings; it renders nothing while those are not set.
+ *
+ * Used by this component's own custom homepage (homepage_enabled) and
+ * registered by name, so a theme that owns the homepage layout itself can
+ * place it too:
  *
  *   { block: "theme:topic-showcase:featured-carousel?", id: "featured" }
- *
- * The `discovery-list-container-top` connector only covers homepages that are
- * a topic list; a custom homepage has no such outlet. The block takes no
- * arguments: tags, order and size come from this component's own carousel
- * settings, exactly as for the connector.
  */
 @block("theme:topic-showcase:featured-carousel", {
-  description: "Featured topics carousel (configured in Topic Showcase)",
+  description: "The featured topics carousel (carousel_* settings)",
 })
 export default class BlockFeaturedCarousel extends Component {
   get enabled() {
@@ -24,7 +24,7 @@ export default class BlockFeaturedCarousel extends Component {
 
   <template>
     {{#if this.enabled}}
-      <ShowcaseCarousel />
+      <div class="homepage-featured-carousel"><ShowcaseCarousel /></div>
     {{/if}}
   </template>
 }

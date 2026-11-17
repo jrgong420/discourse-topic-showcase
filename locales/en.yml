@@ -77,6 +77,24 @@ en:
       contest_entries_order: "Order of the entries. latest = most recently active first, created = newest topic first."
       contest_max_entries: "Maximum number of entry cards in the list of entries. A link to all entries appears when there are more."
       contest_strip_avatars: "Number of participant avatars in the strip under the title. 0 shows none. The avatars are those of the creators of the entries, each participant once, in the order of the entries; if there are more participants, a +n chip ends the row."
+      homepage_enabled: "Replace the forum homepage with a custom homepage built from the sections below. Visitors still reach Latest, Categories and the other lists from the menu. Turn off to get the standard homepage back."
+      homepage_featured_carousel: "Show the featured topics carousel at the top of the custom homepage. It uses the carousel_* settings and needs carousel_filter_tags."
+      homepage_releases_tags: "Releases section: topics carrying all of these tags, newest first, as compact rows. Leave empty to hide the section."
+      homepage_releases_count: "Number of topics in the releases section. 0 hides it."
+      homepage_gallery_category: "Showcase section: the newest topics of this category (first one if several), as thumbnail cards. Leave empty to hide the section."
+      homepage_gallery_count: "Number of cards in the showcase section. 0 hides it."
+      homepage_latest_count: "Number of topics in the latest topics section (the visitor's own Latest list, so muted categories stay hidden). 0 hides it."
+      homepage_partners_tags: "Partners section: topics carrying all of these tags, shown as logo tiles (the topic image) with the title. Can be combined with homepage_partners_category."
+      homepage_partners_category: "Partners section: only topics in this category. With neither tags nor category the section is hidden."
+      homepage_partners_count: "Number of tiles in the partners section. 0 hides it."
+      homepage_deals_tags: "Deals section: topics carrying all of these tags, newest first. Leave empty to hide the section; it also hides itself while there are no such topics."
+      homepage_deals_count: "Number of topics in the deals section. 0 hides it."
+      homepage_docs_category: "Documentation section (main column): this category's subcategories as a table of contents, with topic counts and a link to the category. Leave empty to hide the section."
+      homepage_docs_count: "Number of subcategories listed in the documentation section. 0 hides it."
+      homepage_docs_descriptions: "Show each subcategory's description under its name in the documentation section."
+      homepage_questions_category: "Open questions section (side column): the newest topics of this category (first one if several). Leave empty to hide the section."
+      homepage_questions_count: "Number of topics in the open questions section. 0 hides it."
+      homepage_questions_unsolved: "Only list topics without an accepted solution (needs the Solved plugin with solutions enabled in that category)."
   showcase:
     sort:
       label: "Sort by"
@@ -116,3 +134,25 @@ en:
     heading: "Entries (%{number})"
     view_all: "View all entries"
     backlink: "Part of the contest:"
+  homepage:
+    see_all: "See all"
+    category_open: "Open %{name}"
+    category_more:
+      one: "%{name}: %{count} more section"
+      other: "%{name}: %{count} more sections"
+    load_error: "This section could not be loaded."
+    retry: "Try again"
+    releases:
+      title: "Releases"
+    gallery:
+      title: "Showcase"
+    latest:
+      title: "Latest topics"
+    partners:
+      title: "Partners"
+    deals:
+      title: "Deals"
+    docs:
+      title: "Documentation"
+    questions:
+      title: "Open questions"
