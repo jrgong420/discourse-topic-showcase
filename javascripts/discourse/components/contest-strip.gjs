@@ -1,38 +1,31 @@
 import Component from "@glimmer/component";
-import { tracked } from "@glimmer/tracking";
+import { cached, tracked } from "@glimmer/tracking";
 import { on } from "@ember/modifier";
 import { action } from "@ember/object";
 import { settings, themePrefix } from "virtual:theme";
+import dAvatar from "discourse/ui-kit/helpers/d-avatar";
 import dIcon from "discourse/ui-kit/helpers/d-icon";
 import { i18n } from "discourse-i18n";
-import { smallestThumbnailUrl } from "../lib/thumbnail.js";
+import { participantsOf } from "../lib/contest.js";
 import ContestEntries, { ENTRIES_ID } from "./contest-entries.gjs";
 
 // The inside of the strip, the same for the button and the link. Only
 // phrasing content, as it sits in a button, and no interactive elements: the
-// thumbnails are decoration.
+// avatars are decoration (the participant count is in the text).
 const StripContent = <template>
   {{dIcon "certificate" class="contest-strip__icon"}}
   <span class="contest-strip__text">{{@countLabel}}</span>
 
-  {{#if @thumbnails.length}}
-    <span aria-hidden="true" class="contest-strip__thumbnails">
-      {{#each @thumbnails key="topic.id" as |thumbnail|}}
-        {{#if thumbnail.url}}
-          <img
-            alt=""
-            class="contest-strip__thumbnail"
-            height="32"
-            loading="lazy"
-            src={{thumbnail.url}}
-            width="32"
-          />
-        {{else}}
-          <span class="contest-strip__thumbnail --placeholder">
-            {{dIcon settings.thumbnail_placeholder_icon}}
-          </span>
-        {{/if}}
+  {{#if @avatars.length}}
+    <span aria-hidden="true" class="contest-strip__avatars">
+      {{#each @avatars key="@index" as |user|}}
+        <span class="contest-strip__avatar">
+          {{dAvatar user imageSize=28 hideTitle=true loading="lazy"}}
+        </span>
       {{/each}}
+      {{#if @extra}}
+        <span class="contest-strip__avatar --more">+{{@extra}}</span>
+      {{/if}}
     </span>
   {{/if}}
 
@@ -43,9 +36,9 @@ const StripContent = <template>
 </template>;
 
 /**
- * The compact row under the title of a contest announcement: entry count,
- * thumbnails of some entries and a control for the full list of entries. The
- * whole strip is the control.
+ * The compact row under the title of a contest announcement: participant
+ * count, avatars of some participants and a control for the full list of
+ * entries. The whole strip is the control.
  *
  * With contest_entries_position "after_first_post" the list is rendered after
  * the first post and the control leads there. Otherwise the control is a
@@ -62,20 +55,23 @@ export default class ContestStrip extends Component {
     return settings.contest_entries_position !== "after_first_post";
   }
 
-  get countLabel() {
-    const { entries, hasMore } = this.args.context;
-
-    return hasMore
-      ? i18n(themePrefix("contest.entries_more"), { count: entries.length })
-      : i18n(themePrefix("contest.entries"), { count: entries.length });
+  // The participants among the loaded entries; the avatars are the first
+  // contest_strip_avatars of them.
+  @cached
+  get participants() {
+    return participantsOf(
+      this.args.context.entries,
+      settings.contest_strip_avatars
+    );
   }
 
-  // The first entries in list order. An entry without an image gets the same
-  // placeholder as its card, so the strip matches the list below it.
-  get thumbnails() {
-    return this.args.context.entries
-      .slice(0, settings.contest_strip_thumbnails)
-      .map((topic) => ({ topic, url: smallestThumbnailUrl(topic) }));
+  get countLabel() {
+    const { hasMore } = this.args.context;
+    const { count } = this.participants;
+
+    return hasMore
+      ? i18n(themePrefix("contest.participants_more"), { count })
+      : i18n(themePrefix("contest.participants"), { count });
   }
 
   // The list is part of the first post, so it is only in the DOM when the
@@ -128,9 +124,10 @@ export default class ContestStrip extends Component {
             (i18n (themePrefix "contest.hide_entries"))
             (i18n (themePrefix "contest.show_entries"))
           }}
+          @avatars={{this.participants.avatars}}
           @countLabel={{this.countLabel}}
+          @extra={{this.participants.extra}}
           @icon={{if this.expanded "chevron-up" "chevron-down"}}
-          @thumbnails={{this.thumbnails}}
         />
       </button>
 
@@ -145,9 +142,10 @@ export default class ContestStrip extends Component {
       >
         <StripContent
           @action={{i18n (themePrefix "contest.show_entries")}}
+          @avatars={{this.participants.avatars}}
           @countLabel={{this.countLabel}}
+          @extra={{this.participants.extra}}
           @icon="arrow-down"
-          @thumbnails={{this.thumbnails}}
         />
       </a>
     {{/if}}

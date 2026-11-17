@@ -151,6 +151,62 @@
     line-height: var(--line-height-medium);
   }
 
+  // Status of the topic (a tag from the status_badges setting), over the
+  // thumbnail. A pill on the card's own background colours, so it reads on any
+  // image in light and dark mode; the status colour is only a small dot (or
+  // the icon), as its contrast against the background is unknown. It sits
+  // under the stretched link, so it does not catch the click.
+  &__status {
+    --tc-TopicShowcase-card-color-status: var(--primary-medium);
+    position: absolute;
+    inset-block-start: var(--space-2);
+    inset-inline-end: var(--space-2);
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    max-width: calc(100% - var(--space-2) * 2);
+    padding: var(--space-half) var(--space-2);
+    overflow: hidden;
+    border: 1px solid var(--primary-low);
+    border-radius: 999px;
+    background: var(--secondary);
+    box-shadow: var(--shadow-card);
+    color: var(--primary);
+    font-size: var(--font-down-2);
+    font-weight: 700;
+    line-height: var(--line-height-medium);
+    white-space: nowrap;
+  }
+
+  // A long label gets cut with an ellipsis instead of overflowing the thumbnail.
+  &__status-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__status-dot {
+    flex: none;
+    width: 0.625em;
+    height: 0.625em;
+    border-radius: 50%;
+    background: var(--tc-TopicShowcase-card-color-status);
+  }
+
+  &__status-icon {
+    flex: none;
+    color: var(--tc-TopicShowcase-card-color-status);
+  }
+
+  // The week of a running status, set off from the label.
+  &__status-week {
+    flex: none;
+    padding-inline-start: var(--space-1);
+    border-inline-start: 1px solid var(--primary-low-mid);
+    font-variant-numeric: tabular-nums;
+  }
+
   &__placeholder {
     position: absolute;
     inset: 0;
@@ -339,9 +395,21 @@
     -webkit-line-clamp: 2;
   }
 
+  // One line of tags, cut at the edge. Core lets its tag list wrap and gives
+  // tags a larger size on topic pages, so both are set on its elements.
   .showcase-card__tags {
     overflow: hidden;
     white-space: nowrap;
+
+    .discourse-tags {
+      flex-wrap: nowrap;
+      overflow: hidden;
+    }
+
+    .discourse-tag {
+      flex: none;
+      font-size: var(--font-down-1);
+    }
   }
 
   .showcase-card__footer {

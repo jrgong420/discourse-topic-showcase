@@ -1,4 +1,5 @@
 import Component from "@glimmer/component";
+import { trustHTML } from "@ember/template";
 import { settings, themePrefix } from "virtual:theme";
 import TopicLink from "discourse/components/topic-list/topic-link";
 import UnreadIndicator from "discourse/components/topic-list/unread-indicator";
@@ -16,11 +17,25 @@ import dFormatDate from "discourse/ui-kit/helpers/d-format-date";
 import dIcon from "discourse/ui-kit/helpers/d-icon";
 import dNumber from "discourse/ui-kit/helpers/d-number";
 import { i18n } from "discourse-i18n";
+import {
+  parseStatusBadges,
+  statusBadgeOf,
+  tagsWithoutStatus,
+  weekSince,
+} from "../lib/status-badge.js";
 
 // Width in CSS pixels the thumbnail should cover in the list layout.
 const LIST_THUMBNAIL_TARGET_WIDTH = 360;
 // Grid cards can grow beyond the minimum width, and screens can be dense.
 const GRID_THUMBNAIL_WIDTH_FACTOR = 1.5;
+
+// The status_badges setting, read once and not per card.
+let statusBadges;
+
+function configuredStatusBadges() {
+  statusBadges ??= parseStatusBadges(settings.status_badges);
+  return statusBadges;
+}
 
 /**
  * A topic card with thumbnail, title and metadata. Independent of the topic
@@ -30,11 +45,16 @@ const GRID_THUMBNAIL_WIDTH_FACTOR = 1.5;
  * @param {"list"|"grid"} @layout
  * @param {boolean} [@eventDate] Show the start date of the topic's calendar
  *   event (`event_starts_at`) as a badge over the thumbnail.
+ * @param {boolean} [@showTags] Overrides the setting that decides whether
+ *   the tag row is shown (the row is then only rendered when there are tags).
  * @param {"list"|"carousel"} [@context] Where the card is used. In the
  *   "carousel" context the card has a fixed height (clamped text) and reads
  *   the carousel_show_* settings for excerpt, tags, replies, likes and
  *   activity instead of the global show_* ones; views and publish date are
  *   not shown.
+ *
+ * A topic that carries a tag of the status_badges setting shows that status as
+ * a badge over the thumbnail, and the tag is left out of the tag row.
  */
 export default class ShowcaseCard extends Component {
   get layout() {
@@ -125,6 +145,57 @@ export default class ShowcaseCard extends Component {
     return { iso: date.toISOString(), label: smartShortDate(date, shortDate) };
   }
 
+  // The status badge of the topic (the first status_badges entry whose tag it
+  // carries), or null.
+  get statusBadge() {
+    return statusBadgeOf(this.args.topic.tags, configuredStatusBadges());
+  }
+
+  // The running week of the topic, counted from the start of its calendar
+  // event and no further than its end, for statuses that ask for it
+  // (show_week). Null otherwise.
+  get statusWeek() {
+    if (!this.statusBadge?.showWeek) {
+      return null;
+    }
+
+    const { event_starts_at: start, event_ends_at: end } = this.args.topic;
+    return weekSince(start, end);
+  }
+
+  // The colour only reaches the markup as a custom property, and only after
+  // it passed the pattern check in parseStatusBadges.
+  get statusStyle() {
+    const { color } = this.statusBadge;
+    return color
+      ? trustHTML(`--tc-TopicShowcase-card-color-status: ${color}`)
+      : null;
+  }
+
+  // The tags of the tag row: all but the status tag.
+  get listedTags() {
+    return tagsWithoutStatus(this.args.topic.tags, this.statusBadge);
+  }
+
+  // dDiscourseTags in "list" mode reads the topic's visibleListTags and has no
+  // parameter to override them (its `tags` param only applies without a
+  // topic). The topic itself is still needed: tag callbacks of plugins (such as
+  // the assignee chip of discourse-assign) receive it. So, only for topics
+  // with a status badge, the helper gets a stand-in that inherits everything
+  // from the topic except for its visible tags.
+  get tagsTopic() {
+    const { topic } = this.args;
+    if (!this.statusBadge) {
+      return topic;
+    }
+
+    return Object.create(topic, {
+      visibleListTags: {
+        value: tagsWithoutStatus(topic.visibleListTags, this.statusBadge),
+      },
+    });
+  }
+
   // Carousel cards reserve the space of the parts they show (the elements
   // render even when empty), so every card has the same height.
   get showExcerpt() {
@@ -134,9 +205,13 @@ export default class ShowcaseCard extends Component {
   }
 
   get showTags() {
+    if (this.args.showTags != null) {
+      return this.args.showTags && this.listedTags.length;
+    }
+
     return this.isCarousel
       ? settings.carousel_show_tags
-      : settings.show_tags && this.args.topic.tags?.length;
+      : settings.show_tags && this.listedTags.length;
   }
 
   get showCategory() {
@@ -191,6 +266,31 @@ export default class ShowcaseCard extends Component {
             {{this.eventDate.label}}
           </time>
         {{/if}}
+
+        {{#if this.statusBadge}}
+          <span class="showcase-card__status" style={{this.statusStyle}}>
+            {{#if this.statusBadge.icon}}
+              {{dIcon this.statusBadge.icon class="showcase-card__status-icon"}}
+            {{else if this.statusBadge.color}}
+              <span aria-hidden="true" class="showcase-card__status-dot"></span>
+            {{/if}}
+            <span
+              class="showcase-card__status-label"
+            >{{this.statusBadge.label}}</span>
+            {{#if this.statusWeek}}
+              <span
+                class="showcase-card__status-week"
+                title={{i18n
+                  (themePrefix "showcase.week")
+                  number=this.statusWeek
+                }}
+              >{{i18n
+                  (themePrefix "showcase.week_short")
+                  number=this.statusWeek
+                }}</span>
+            {{/if}}
+          </span>
+        {{/if}}
       </div>
 
       <div class="showcase-card__body">
@@ -229,8 +329,8 @@ export default class ShowcaseCard extends Component {
 
         {{#if this.showTags}}
           <div class="showcase-card__tags">
-            {{#if @topic.tags.length}}
-              {{dDiscourseTags @topic mode="list"}}
+            {{#if this.listedTags.length}}
+              {{dDiscourseTags this.tagsTopic mode="list"}}
             {{/if}}
           </div>
         {{/if}}

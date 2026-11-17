@@ -42,6 +42,26 @@ inherit_layout_to_subcategories:
   type: bool
   default: false
 
+list_view_tags:
+  type: list
+  list_type: tag
+  default: ""
+
+grid_view_tags:
+  type: list
+  list_type: tag
+  default: ""
+
+list_view_tag_groups:
+  type: list
+  list_type: tag_group
+  default: ""
+
+grid_view_tag_groups:
+  type: list
+  list_type: tag_group
+  default: ""
+
 show_excerpt:
   type: bool
   default: true
@@ -127,6 +147,36 @@ card_border_radius:
     - small
     - medium
     - large
+
+status_badges:
+  type: objects
+  default: []
+  schema:
+    name: status badge
+    properties:
+      tag:
+        type: string
+        required: true
+        validations:
+          min_length: 1
+          max_length: 100
+      label:
+        type: string
+        required: true
+        validations:
+          min_length: 1
+          max_length: 40
+      color:
+        type: string
+        validations:
+          max_length: 30
+      icon:
+        type: string
+        validations:
+          max_length: 60
+      show_week:
+        type: boolean
+        default: false
 
 carousel_enabled:
   type: bool
@@ -241,11 +291,15 @@ contest_max_entries:
   min: 1
   max: 30
 
-contest_strip_thumbnails:
+contest_strip_avatars:
   type: integer
   default: 5
   min: 0
   max: 8
+
+contest_entries_show_tags:
+  type: bool
+  default: true
 
 contest_entries_layout:
   type: enum

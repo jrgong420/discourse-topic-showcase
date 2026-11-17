@@ -3,6 +3,7 @@ import {
   announcementOf,
   contestTagOf,
   entriesOf,
+  participantsOf,
   resolveAnnouncementTags,
   roleOf,
 } from "../../../../javascripts/discourse/lib/contest.js";
@@ -158,6 +159,100 @@ module("Unit | Lib | contest", function () {
         null
       );
       assert.strictEqual(announcementOf([], "contest-2026", ["x"]), null);
+    });
+  });
+
+  module("participantsOf", function () {
+    function entry(id, creator) {
+      return { id, creator };
+    }
+
+    const ann = { id: 1, username: "ann" };
+    const bob = { id: 2, username: "bob" };
+    const cy = { id: 3, username: "cy" };
+
+    test("counts distinct creators, in entry order", function (assert) {
+      const result = participantsOf(
+        [entry(10, ann), entry(11, bob), entry(12, ann), entry(13, cy)],
+        8
+      );
+
+      assert.strictEqual(result.count, 3);
+      assert.deepEqual(
+        result.avatars.map((user) => user.username),
+        ["ann", "bob", "cy"]
+      );
+      assert.strictEqual(result.extra, 0);
+    });
+
+    test("an entry without a creator is a participant of its own", function (assert) {
+      const result = participantsOf(
+        [entry(10, ann), entry(11, undefined), entry(12, null), entry(13, ann)],
+        8
+      );
+
+      assert.strictEqual(result.count, 3);
+      assert.deepEqual(
+        result.avatars.map((user) => user.username),
+        ["ann"]
+      );
+      assert.strictEqual(result.extra, 2);
+    });
+
+    test("shows at most maxAvatars and reports the rest as extra", function (assert) {
+      const result = participantsOf(
+        [entry(10, ann), entry(11, bob), entry(12, cy)],
+        2
+      );
+
+      assert.strictEqual(result.count, 3);
+      assert.deepEqual(
+        result.avatars.map((user) => user.username),
+        ["ann", "bob"]
+      );
+      assert.strictEqual(result.extra, 1);
+    });
+
+    test("0 avatars shows none and no extra, but still counts", function (assert) {
+      const result = participantsOf([entry(10, ann), entry(11, bob)], 0);
+
+      assert.strictEqual(result.count, 2);
+      assert.deepEqual(result.avatars, []);
+      assert.strictEqual(result.extra, 0);
+    });
+
+    test("tells creators apart by username when they have no id", function (assert) {
+      const result = participantsOf(
+        [
+          entry(10, { username: "Ann" }),
+          entry(11, { username: "ann" }),
+          entry(12, { username: "bob" }),
+        ],
+        8
+      );
+
+      assert.strictEqual(result.count, 2);
+    });
+
+    test("a creator with neither id nor username counts as unknown", function (assert) {
+      const result = participantsOf([entry(10, {}), entry(11, {})], 8);
+
+      assert.strictEqual(result.count, 2);
+      assert.deepEqual(result.avatars, []);
+      assert.strictEqual(result.extra, 0);
+    });
+
+    test("no entries, no participants", function (assert) {
+      assert.deepEqual(participantsOf([], 5), {
+        count: 0,
+        avatars: [],
+        extra: 0,
+      });
+      assert.deepEqual(participantsOf(undefined, 5), {
+        count: 0,
+        avatars: [],
+        extra: 0,
+      });
     });
   });
 });

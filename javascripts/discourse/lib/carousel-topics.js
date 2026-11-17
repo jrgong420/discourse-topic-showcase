@@ -1,6 +1,7 @@
 // Pure helpers for the featured topics carousel: event filtering, ordering and
 // the "new since you last looked" count. No Ember, no DOM, so they are unit
 // testable; `now` and `random` are injected for the same reason.
+import { tagNamesOf } from "./tag-names.js";
 
 function toTime(value) {
   if (value == null || value === "") {
@@ -136,13 +137,11 @@ export function countNewSince(topics, seenAt) {
 }
 
 /**
- * Whether a topic carries every one of the given tag names. Topic tags are
- * serialised as objects with a name, or as plain names on older data.
+ * Whether a topic carries every one of the given tag names (case
+ * insensitive).
  */
 export function hasAllTags(topic, tagNames) {
-  const names = (topic.tags ?? []).map((tag) =>
-    String(tag?.name ?? tag).toLowerCase()
-  );
+  const names = tagNamesOf(topic.tags).map((name) => name.toLowerCase());
 
   return tagNames.every((name) => names.includes(String(name).toLowerCase()));
 }
