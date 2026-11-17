@@ -12,10 +12,20 @@
 
     // Narrow: one column, main column first, then the side column. The groups
     // dissolve so the panels can be ordered explicitly.
+    // The layout takes the full width of the page area and centres the usual
+    // reading column (59.5rem) with side gutters; `cqw` is the width of core's
+    // block container around the layout. Where the page area is no wider than
+    // the column (phones, narrow windows, themes with a narrow page area) the
+    // gutter is 0 and nothing changes.
     &__layout {
+      --tc-TopicShowcase-homepage-size-gutter: max(
+        0px,
+        calc((100cqw - 59.5rem) / 2)
+      );
       display: flex;
       flex-direction: column;
       gap: var(--space-4);
+      padding-inline: var(--tc-TopicShowcase-homepage-size-gutter);
     }
 
     &__block-container--main,
@@ -23,8 +33,14 @@
       display: contents;
     }
 
+    // The carousel extends into those gutters, so its cards grow on wide
+    // screens while the panels below keep the column width. At most 14rem per
+    // side: a very wide window should not stretch it endlessly.
     &__block--featured {
       order: 0;
+      margin-inline: calc(
+        -1 * min(var(--tc-TopicShowcase-homepage-size-gutter), 14rem)
+      );
     }
 
     &__block--releases {
@@ -103,5 +119,17 @@
         grid-column: 1 / -1;
       }
     }
+  }
+
+  // Horizon caps every direct child of the page area at 1000px. The homepage
+  // lifts that cap for itself (the column is re-created by the gutters above),
+  // which is what lets the carousel be wider than the rest. Themes without
+  // that cap are not affected.
+  html
+    body:not(.wizard)
+    #main-outlet-wrapper
+    #main-outlet
+    > .homepage-blocks.homepage-blocks {
+    max-width: none;
   }
 }
